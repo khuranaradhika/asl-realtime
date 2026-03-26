@@ -20,7 +20,7 @@ Each entry should include:
 
 ### EXP-001 — Baseline (no augmentation)
 - **Date:** TBD
-- **Run by:** Hrishikesh
+- **Run by:** 
 - **Command:**
   ```bash
   python src/train.py --vocab 100 --epochs 50 --d_model 128 --n_layers 3
@@ -36,7 +36,7 @@ Each entry should include:
 
 ### EXP-002 — + Augmentation
 - **Date:** TBD
-- **Run by:** Gyula
+- **Run by:** 
 - **Command:**
   ```bash
   python src/train.py --vocab 100 --epochs 50 --d_model 128 --n_layers 3
@@ -52,7 +52,7 @@ Each entry should include:
 
 ### EXP-003 — Architecture search: d_model=64
 - **Date:** TBD
-- **Run by:** Jian
+- **Run by:** 
 - **Command:**
   ```bash
   python src/train.py --vocab 100 --epochs 50 --d_model 64 --n_layers 3
@@ -66,7 +66,7 @@ Each entry should include:
 
 ### EXP-004 — Architecture search: d_model=256
 - **Date:** TBD
-- **Run by:** Jian
+- **Run by:** 
 - **Command:**
   ```bash
   python src/train.py --vocab 100 --epochs 50 --d_model 256 --n_layers 4
@@ -80,7 +80,7 @@ Each entry should include:
 
 ### EXP-005 — Teacher model (GPU)
 - **Date:** TBD
-- **Run by:** Hrishikesh
+- **Run by:** 
 - **Command:**
   ```bash
   python src/train.py --vocab 100 --epochs 100 --teacher
@@ -95,7 +95,7 @@ Each entry should include:
 
 ### EXP-006 — Knowledge distillation (stretch goal)
 - **Date:** TBD
-- **Run by:** Jian
+- **Run by:** 
 - **Command:**
   ```bash
   python src/distill.py --teacher models/checkpoints/teacher_best.pt --alpha 0.3 --tau 4

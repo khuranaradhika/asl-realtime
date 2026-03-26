@@ -9,11 +9,13 @@
 ## Group Members
 | Name | GitHub | Role |
 |------|--------|------|
-| Gyula Planky | [@gyuszix](https://github.com/gyuszix) | Data pipeline + augmentation |
-| Hrishikesh Pradhan | [@hspgit](https://github.com/hspgit) | Model architecture + training |
-| Jian Gao | [@iamjaygao](https://github.com/iamjaygao) | CTC decoder + distillation |
-| Radhika Khurana | [@khuranaradhika](https://github.com/khuranaradhika) | ONNX export + evaluation + demo |
+| Gyula Planky | [@gyuszix](https://github.com/gyuszix) |  |
+| Hrishikesh Pradhan | [@hspgit](https://github.com/hspgit) |  |
+| Jian Gao | [@iamjaygao](https://github.com/iamjaygao) |  |
+| Radhika Khurana | [@khuranaradhika](https://github.com/khuranaradhika) |  |
 
+Possible roles: 
+Data pipeline + augmentation, Model architecture + training, CTC decoder + distillation, ONNX export + evaluation + demo
 ---
 
 ## Project Overview
