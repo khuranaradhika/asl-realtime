@@ -7,7 +7,6 @@ mediapipe>=0.10.0
 
 # Video I/O
 opencv-python>=4.9.0
-decord>=0.6.0
 
 # ONNX export and inference
 onnx>=1.16.0
