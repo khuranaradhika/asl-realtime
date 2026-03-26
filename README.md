@@ -1,16 +1,30 @@
-# Applied Deep Learning Final Project
+# Real-Time ASL Translation
+### Applied Deep Learning — Final Project
+**Northeastern University · Spring 2026**
 
-**Course:** Applied Deep Learning  
-**Group Members:** Gyula Planky · Hrishikesh Pradhan · Jian Gao · Radhika Khurana
+> Keypoint-based temporal transformer for real-time American Sign Language word recognition on CPU.
+
+---
+
+## Group Members
+| Name | GitHub | Role |
+|------|--------|------|
+| Gyula Planky | [@gyuszix](https://github.com/gyuszix) | Data pipeline + augmentation |
+| Hrishikesh Pradhan | [@hspgit](https://github.com/hspgit) | Model architecture + training |
+| Jian Gao | [@iamjaygao](https://github.com/iamjaygao) | CTC decoder + distillation |
+| Radhika Khurana | [@khuranaradhika](https://github.com/khuranaradhika) | ONNX export + evaluation + demo |
 
 ---
 
 ## Project Overview
 
-> _[Fill in: brief description of your proposed project idea and motivation.]_
+We build a lightweight transformer that takes hand keypoints extracted from a webcam stream and outputs a real-time ASL word transcript. The core contribution is making this work on **CPU in real time** — most existing models require GPU inference.
 
-**Project Area:** `[ ] Perception` &nbsp;|&nbsp; `[ ] Behavior` &nbsp;|&nbsp; `[ ] Other Signals`  
-**Data Types:** `[ ] Images` &nbsp;|&nbsp; `[ ] Video` &nbsp;|&nbsp; `[ ] RF` &nbsp;|&nbsp; `[ ] Other: ___`
+**Pipeline:**
+```
+Webcam → MediaPipe Holistic → Temporal Transformer → CTC Decoder → Text
+          (keypoints, free)    (~1.2M params)          (greedy)
+```
 
 ---
 
@@ -20,91 +34,126 @@
 applied_deep_learning_final/
 │
 ├── data/
-│   ├── raw/               # Original, unmodified datasets
-│   └── processed/         # Cleaned/transformed data for modeling
+│   ├── raw/                  # Downloaded WLASL/MS-ASL videos (gitignored)
+│   └── processed/            # Pre-extracted .npy keypoint files + manifests
 │
 ├── src/
-│   ├── dataloader.py      # PyTorch Dataset/DataLoader definitions
-│   └── ...                # Other source scripts
+│   ├── dataloader.py         # WLASLDataset, DataLoader, augmentations
+│   ├── model.py              # SignTransformer, PositionalEncoding
+│   ├── train.py              # Training loop, checkpointing, logging
+│   ├── evaluate.py           # Top-1/5 accuracy, WER, latency benchmarking
+│   ├── distill.py            # Knowledge distillation (stretch goal)
+│   ├── export.py             # ONNX export + quantization
+│   └── demo.py               # Real-time webcam demo
 │
-├── notebooks/             # Jupyter notebooks for EDA and experiments
+├── notebooks/
+│   ├── 01_eda.ipynb          # Exploratory analysis on WLASL
+│   ├── 02_baseline.ipynb     # Baseline training experiments
+│   ├── 03_ablations.ipynb    # Ablation study results + plots
+│   └── 04_demo_test.ipynb    # Demo prototype
 │
-├── models/                # Saved model weights and checkpoints
+├── models/
+│   ├── checkpoints/          # .pt checkpoint files (gitignored)
+│   └── sign_model.onnx       # Exported deployment model
 │
-├── docs/                  # Documentation, experiment logs, project plans
+├── docs/
+│   ├── experiments.md        # Running experiment log
+│   └── project_outline.pdf   # Full project proposal
 │
-├── results/               # Output plots, metrics, evaluation results
+├── results/
+│   ├── figures/              # Pareto curves, confusion matrices
+│   └── metrics/              # JSON/CSV evaluation results
 │
-├── requirements.txt       # Python dependencies
+├── .gitignore
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## Setup & Environment
+## Setup
 
-### 1. Clone the repo
+### 1. Clone and install
 ```bash
-git clone https://github.com/khuranaradhika/applied_deep_learning_final.git
-cd applied_deep_learning_final
-```
-
-### 2. Create and activate a virtual environment
-```bash
+git clone https://github.com/khuranaradhika/asl-realtime.git
+cd asl-realtime
 python -m venv venv
-source venv/bin/activate        # macOS/Linux
-venv\Scripts\activate           # Windows
-```
-
-### 3. Install dependencies
-```bash
+source venv/bin/activate        # Mac/Linux
+# venv\Scripts\activate         # Windows
 pip install -r requirements.txt
 ```
 
-> Please always activate your virtual environment before running any scripts or notebooks, and update `requirements.txt` when you add new packages (`pip freeze > requirements.txt`).
+### 2. Download WLASL
+```bash
+# Clone the WLASL download scripts
+git clone https://github.com/dxli94/WLASL.git /tmp/wlasl
+cd /tmp/wlasl
+pip install -r requirements.txt
+python start_kit/downloader.py
+# Move videos to our data directory
+mv videos/ ../applied_deep_learning_final/data/raw/wlasl/
+```
+> ⚠️ Expect ~15–20% of clips to be unavailable (YouTube takedowns). This is normal.
+
+### 3. Extract keypoints
+```bash
+python src/dataloader.py --extract --split train
+python src/dataloader.py --extract --split val
+python src/dataloader.py --extract --split test
+```
+
+### 4. Train baseline
+```bash
+python src/train.py --vocab 100 --epochs 50 --d_model 128 --n_layers 3
+```
+
+### 5. Run demo
+```bash
+python src/demo.py --model models/sign_model.onnx
+```
 
 ---
 
-## PyTorch DataLoader
+## Datasets
 
-We use the [PyTorch Dataset & DataLoader API](https://docs.pytorch.org/tutorials/beginner/basics/data_tutorial.html) for all data loading. The standard template lives in `src/dataloader.py` — create new dataloaders in the same style to keep things consistent across the team.
+| Dataset | Classes | Clips | Signers | Access |
+|---------|---------|-------|---------|--------|
+| WLASL100 | 100 | ~2,000 | 119 | [Free](https://github.com/dxli94/WLASL) |
+| WLASL1000 | 1,000 | ~13,000 | 119 | Same |
+| MS-ASL | 1,000 | 25,513 | 222 | [Free (Microsoft)](https://www.microsoft.com/en-us/research/project/ms-asl/) |
 
 ---
 
-## Jupyter Notebook Guidelines
+## Results
 
-- **Clear outputs before committing** to avoid merge conflicts and repo bloat.
-- From the terminal: `jupyter nbconvert --clear-output --inplace notebooks/*.ipynb`
-- Keep notebooks in `notebooks/` — don't scatter them across the repo.
+| Model | WLASL100 Top-1 | WLASL100 Top-5 | CPU Latency | Size |
+|-------|---------------|---------------|-------------|------|
+| Baseline (no aug) | — | — | — | — |
+| + Augmentation | — | — | — | — |
+| + Distillation | — | — | — | — |
+| **Full model** | — | — | — | — |
+| Teacher (reference) | — | — | N/A (GPU) | — |
+
+*Results will be updated as experiments complete.*
 
 ---
 
 ## Git Workflow
 
 - `main` — stable, working code only
-- Feature branches: `feature/your-name-description` (e.g., `feature/radhika-dataloader`)
-- Open a PR and get at least one review before merging into `main`
-- Write meaningful commit messages: `Add ResNet baseline` not `update stuff`
-- Pull before you push — avoid unnecessary conflicts
+- Feature branches: `feature/your-name-description`
+- Open a PR → at least **one review** → merge
+- Clear notebook outputs before committing:
+  ```bash
+  jupyter nbconvert --clear-output --inplace notebooks/*.ipynb
+  ```
 
 ---
 
-## Experiments & Planning
+## Key References
 
-> _[Document planned experiments, ablations, and steps here — or link to a doc in `docs/`.]_
-
-- [ ] EDA on raw data
-- [ ] Baseline model
-- [ ] Experiment 1: _____
-- [ ] Experiment 2: _____
-
----
-
-## Team Members and Contributions
-
-| Name | GitHub |
-|------|--------|
-| Radhika Khurana | [@khuranaradhika](https://github.com/khuranaradhika) | Created github (sample text area)
-| Gyula Planky | — |
-| Hrishikesh Pradhan | — |
-| Jian Gao | — |
+- [WLASL Dataset](https://github.com/dxli94/WLASL) — Li et al., WACV 2020
+- [SPOTER](https://github.com/matyasbohacek/spoter) — Bohácek & Hrúz, WACV 2022
+- [MediaPipe](https://google.github.io/mediapipe/) — Lugaresi et al., 2019
+- [PyTorch DataLoader tutorial](https://docs.pytorch.org/tutorials/beginner/basics/data_tutorial.html)
+- [sign.mt](https://sign.mt) — Moryossef, EMNLP 2024
