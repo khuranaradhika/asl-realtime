@@ -47,8 +47,11 @@ def extract_keypoints_from_video(video_path: str) -> np.ndarray:
     except ImportError:
         raise ImportError("pip install mediapipe opencv-python")
 
-    mp_holistic = mp.solutions.holistic
-    holistic    = mp_holistic.Holistic(
+    holistic = mp.tasks.vision.HolisticLandmarker if hasattr(mp, 'tasks') else None
+
+    # Use legacy solutions API with compatibility shim
+    import mediapipe.python.solutions.holistic as _holistic_mod
+    holistic = _holistic_mod.Holistic(
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5,
         static_image_mode=False)
@@ -123,7 +126,7 @@ def preprocess_dataset(split: str = "train", vocab_size: int = 100):
             if inst["split"] != split:
                 continue
             video_id   = inst["video_id"]
-            video_path = str(raw_dir / f"{video_id}.mp4")
+            video_path = str(raw_dir / "videos" / f"{video_id}.mp4")
             if not os.path.exists(video_path):
                 continue  # unavailable clip — skip silently
 
