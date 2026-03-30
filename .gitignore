@@ -1,1 +1,5 @@
 cookies.txt
+data/raw/
+data/processed/
+data/*.task
+models/checkpoints/
