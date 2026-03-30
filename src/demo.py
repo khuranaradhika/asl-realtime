@@ -1,7 +1,7 @@
 """
 src/demo.py
 
-Real-time ASL recognition demo using ONNX model + MediaPipe.
+Real-time ASL recognition demo using ONNX model + MediaPipe HandLandmarker (Tasks API).
 Shows live webcam feed with hand skeleton overlay and predicted word.
 
 Usage:
@@ -20,6 +20,15 @@ WINDOW_FRAMES  = 60   # frames to buffer before running inference
 SMOOTH_WINDOW  = 5    # smooth predictions over this many inference calls
 KEYPOINT_DIM   = 126
 
+# MediaPipe hand landmark connections (21 landmarks, 0-indexed)
+_HAND_CONNECTIONS = [
+    (0,1),(1,2),(2,3),(3,4),        # thumb
+    (0,5),(5,6),(6,7),(7,8),        # index
+    (5,9),(9,10),(10,11),(11,12),   # middle
+    (9,13),(13,14),(14,15),(15,16), # ring
+    (13,17),(17,18),(18,19),(19,20),(0,17), # pinky + palm
+]
+
 
 def load_vocab(vocab_path: str = "data/processed/vocab.json") -> dict:
     """Returns {label_idx: sign_word} mapping."""
@@ -28,41 +37,71 @@ def load_vocab(vocab_path: str = "data/processed/vocab.json") -> dict:
     return {v: k for k, v in vocab.items()}  # invert: idx → word
 
 
-def extract_keypoints(frame, holistic):
-    """Extract 126-dim keypoint vector from a BGR frame using MediaPipe."""
-    import cv2
-    rgb     = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    results = holistic.process(rgb)
+def _get_hand_detector():
+    """Load MediaPipe HandLandmarker via Tasks API (same as dataloader)."""
+    import urllib.request
+    import mediapipe as mp
+    model_path = Path("data/hand_landmarker.task")
+    if not model_path.exists():
+        model_path.parent.mkdir(parents=True, exist_ok=True)
+        url = ("https://storage.googleapis.com/mediapipe-models/"
+               "hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task")
+        print("Downloading MediaPipe hand model...")
+        urllib.request.urlretrieve(url, str(model_path))
+        print("Done.")
+    BaseOptions           = mp.tasks.BaseOptions
+    HandLandmarker        = mp.tasks.vision.HandLandmarker
+    HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
+    VisionRunningMode     = mp.tasks.vision.RunningMode
+    options = HandLandmarkerOptions(
+        base_options=BaseOptions(model_asset_path=str(model_path)),
+        running_mode=VisionRunningMode.IMAGE,
+        num_hands=2,
+        min_hand_detection_confidence=0.5,
+        min_hand_presence_confidence=0.5,
+        min_tracking_confidence=0.5,
+    )
+    return HandLandmarker.create_from_options(options)
 
-    lh = (np.array([[lm.x, lm.y, lm.z]
-                    for lm in results.left_hand_landmarks.landmark],
-                   dtype=np.float32).flatten()
-          if results.left_hand_landmarks else np.zeros(63, dtype=np.float32))
-    rh = (np.array([[lm.x, lm.y, lm.z]
-                    for lm in results.right_hand_landmarks.landmark],
-                   dtype=np.float32).flatten()
-          if results.right_hand_landmarks else np.zeros(63, dtype=np.float32))
 
-    return np.concatenate([lh, rh]), results
-
-
-def draw_skeleton(frame, results):
-    """Draw hand and pose skeleton overlays on the frame."""
+def extract_keypoints(frame, detector):
+    """Extract 126-dim keypoint vector from a BGR frame using Tasks API."""
     import cv2
     import mediapipe as mp
-    mp_drawing = mp.solutions.drawing_utils
-    mp_holistic = mp.solutions.holistic
+    rgb      = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+    result   = detector.detect(mp_image)
 
-    mp_drawing.draw_landmarks(
-        frame, results.left_hand_landmarks,
-        mp_holistic.HAND_CONNECTIONS,
-        mp_drawing.DrawingSpec(color=(121, 22, 76),  thickness=2, circle_radius=2),
-        mp_drawing.DrawingSpec(color=(121, 44, 250), thickness=1))
-    mp_drawing.draw_landmarks(
-        frame, results.right_hand_landmarks,
-        mp_holistic.HAND_CONNECTIONS,
-        mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-        mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=1))
+    lh = np.zeros(63, dtype=np.float32)
+    rh = np.zeros(63, dtype=np.float32)
+    for i, hand_landmarks in enumerate(result.hand_landmarks):
+        handedness = result.handedness[i][0].category_name
+        coords = np.array([[lm.x, lm.y, lm.z]
+                            for lm in hand_landmarks],
+                           dtype=np.float32).flatten()
+        if handedness == "Left":
+            lh = coords
+        else:
+            rh = coords
+
+    return np.concatenate([lh, rh]), result
+
+
+def draw_skeleton(frame, result):
+    """Draw hand landmark skeletons using Tasks API result."""
+    import cv2
+    h, w = frame.shape[:2]
+    colors = {"Left": (121, 44, 250), "Right": (245, 66, 230)}
+
+    for i, hand_landmarks in enumerate(result.hand_landmarks):
+        handedness = result.handedness[i][0].category_name
+        color = colors.get(handedness, (255, 255, 255))
+        pts = [(int(lm.x * w), int(lm.y * h)) for lm in hand_landmarks]
+        for a, b in _HAND_CONNECTIONS:
+            cv2.line(frame, pts[a], pts[b], color, 1)
+        for pt in pts:
+            cv2.circle(frame, pt, 3, color, -1)
+
     return frame
 
 
@@ -88,10 +127,7 @@ def run_demo(onnx_path: str, vocab_size: int = 100):
 
     idx_to_word = load_vocab()
     sess        = ort.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
-
-    mp_holistic = mp.solutions.holistic
-    holistic    = mp_holistic.Holistic(
-        min_detection_confidence=0.5, min_tracking_confidence=0.5)
+    detector    = _get_hand_detector()
 
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -112,7 +148,7 @@ def run_demo(onnx_path: str, vocab_size: int = 100):
         t_start = time.perf_counter()
 
         # Extract keypoints
-        kpts, results = extract_keypoints(frame, holistic)
+        kpts, result = extract_keypoints(frame, detector)
         frame_buffer.append(kpts)
 
         # Run inference every WINDOW_FRAMES frames
@@ -126,14 +162,13 @@ def run_demo(onnx_path: str, vocab_size: int = 100):
             decoded   = greedy_ctc_decode(log_probs, blank=vocab_size)
             if decoded:
                 pred_history.append(decoded[0])
-                # Majority vote over recent predictions
                 if pred_history:
                     most_common = collections.Counter(pred_history).most_common(1)[0][0]
                     current_word = idx_to_word.get(most_common, "Unknown")
             last_inference = time.time()
 
         # Draw skeleton
-        frame = draw_skeleton(frame, results)
+        frame = draw_skeleton(frame, result)
 
         # FPS
         fps_tracker.append(1.0 / max(time.perf_counter() - t_start, 1e-6))
@@ -157,7 +192,7 @@ def run_demo(onnx_path: str, vocab_size: int = 100):
             break
 
     cap.release()
-    holistic.close()
+    detector.close()
     cv2.destroyAllWindows()
 
 
