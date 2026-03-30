@@ -1,5 +1,36 @@
-cookies.txt
-data/raw/
-data/processed/
+# Virtual environment
+venv/
+.venv/
+
+# Raw videos — too large, run downloader locally
+data/raw/wlasl/videos/
+data/raw/msasl/videos/
+
+# MediaPipe model file
 data/*.task
+
+# Model checkpoints
 models/checkpoints/
+
+# Processed keypoints — hosted on HuggingFace instead
+data/processed/train/
+data/processed/val/
+data/processed/test/
+
+# Sensitive files
+cookies.txt
+failed_downloads.jsonl
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Experiments
+wandb/
+runs/
