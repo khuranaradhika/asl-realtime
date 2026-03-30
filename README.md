@@ -33,20 +33,26 @@ Webcam → MediaPipe Holistic → Temporal Transformer → CTC Decoder → Text
 ## Repository Structure
 
 ```
-applied_deep_learning_final/
+asl-realtime/
 │
 ├── data/
-│   ├── raw/                  # Downloaded WLASL/MS-ASL videos (gitignored)
-│   └── processed/            # Pre-extracted .npy keypoint files + manifests
+│   ├── raw/
+│   │   └── wlasl/
+│   │       ├── WLASL_v0.3.json   # Annotation file (2000 signs, 21k instances)
+│   │       └── videos/           # Downloaded .mp4 files (gitignored)
+│   └── processed/
+│       ├── train/                # Pre-extracted .npy keypoint files
+│       └── vocab.json            # Sign label mapping
 │
 ├── src/
 │   ├── dataloader.py         # WLASLDataset, DataLoader, augmentations
 │   ├── model.py              # SignTransformer, PositionalEncoding
 │   ├── train.py              # Training loop, checkpointing, logging
-│   ├── evaluate.py           # Top-1/5 accuracy, WER, latency benchmarking
-│   ├── distill.py            # Knowledge distillation (stretch goal)
 │   ├── export.py             # ONNX export + quantization
 │   └── demo.py               # Real-time webcam demo
+│
+├── scripts/
+│   └── download_wlasl.py     # Parallel downloader for all WLASL videos
 │
 ├── notebooks/
 │   ├── 01_eda.ipynb          # Exploratory analysis on WLASL
@@ -87,15 +93,28 @@ pip install -r requirements.txt
 
 ### 2. Download WLASL
 ```bash
-# Clone the WLASL download scripts
-git clone https://github.com/dxli94/WLASL.git /tmp/wlasl
-cd /tmp/wlasl
-pip install -r requirements.txt
-python start_kit/downloader.py
-# Move videos to our data directory
-mv videos/ ../applied_deep_learning_final/data/raw/wlasl/
+# Downloads all 2000 signs (direct links + YouTube via yt-dlp)
+python scripts/download_wlasl.py
+
+# Skip YouTube if you don't have yt-dlp or want a faster run
+python scripts/download_wlasl.py --skip-youtube
 ```
-> ⚠️ Expect ~15–20% of clips to be unavailable (YouTube takedowns). This is normal.
+
+**Actual yield (run March 2026):** 6,417 usable clips out of 21,083 instances (~30%).
+High failure rate is expected — the dataset is from 2020 and most direct-link hosts are dead or blocked:
+
+| Failure reason | Count |
+|---|---|
+| HTTP 403 (access denied) | 2,323 |
+| HTTP 404 (dead link) | 2,181 |
+| HTML served instead of video | 1,875 |
+| Dead: www.aslpro.com | 1,728 |
+| Dead: aslsignbank.haskins.yale.edu | 1,070 |
+| Dead: www.signingsavvy.com | 344 |
+| YouTube bot detection (need `--cookies`) | ~832 |
+| Other | ~313 |
+
+YouTube bot-detection errors can be partially resolved by passing browser cookies to yt-dlp — see [yt-dlp cookie docs](https://github.com/yt-dlp/yt-dlp#how-do-i-pass-cookies-to-yt-dlp).
 
 ### 3. Extract keypoints
 ```bash
@@ -118,11 +137,16 @@ python src/demo.py --model models/sign_model.onnx
 
 ## Datasets
 
-| Dataset | Classes | Clips | Signers | Access |
-|---------|---------|-------|---------|--------|
-| WLASL100 | 100 | ~2,000 | 119 | [Free](https://github.com/dxli94/WLASL) |
-| WLASL1000 | 1,000 | ~13,000 | 119 | Same |
-| MS-ASL | 1,000 | 25,513 | 222 | [Free (Microsoft)](https://www.microsoft.com/en-us/research/project/ms-asl/) |
+| Dataset | Classes | Instances | Signers | Role | Access |
+|---------|---------|-----------|---------|------|--------|
+| WLASL2000 | 2,000 | 21,083 | 119 | Train + eval | [Free](https://github.com/dxli94/WLASL) |
+| MS-ASL | 1,000 | 25,513 | 222 | Cross-dataset eval | [Request form](https://www.microsoft.com/en-us/research/project/ms-asl/) |
+
+**MS-ASL notes:**
+- Access requires a short form (name, institution, email) — download link arrives by email within minutes
+- Annotations use `start_time` / `end_time` fields (clips are segments of longer YouTube videos, not pre-trimmed) — needs a trim step before keypoint extraction
+- Label strings differ from WLASL (e.g. `"BOOK"` vs `"book"`) — normalize to lowercase and intersect before cross-dataset eval
+- **Don't block on this.** Get WLASL training running first; MS-ASL eval is a clean one-day add-on after that.
 
 ---
 

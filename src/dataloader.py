@@ -34,28 +34,44 @@ DATA_PROC_DIR  = Path("data/processed")
 
 # ─── Keypoint extraction (run once as preprocessing) ─────────────────────────
 
+def _get_hand_detector():
+    import urllib.request
+    import mediapipe as mp
+    model_path = Path("data/hand_landmarker.task")
+    if not model_path.exists():
+        model_path.parent.mkdir(parents=True, exist_ok=True)
+        url = ("https://storage.googleapis.com/mediapipe-models/"
+               "hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task")
+        print(f"Downloading MediaPipe hand model...")
+        urllib.request.urlretrieve(url, str(model_path))
+        print("Done.")
+    BaseOptions           = mp.tasks.BaseOptions
+    HandLandmarker        = mp.tasks.vision.HandLandmarker
+    HandLandmarkerOptions = mp.tasks.vision.HandLandmarkerOptions
+    VisionRunningMode     = mp.tasks.vision.RunningMode
+    options = HandLandmarkerOptions(
+        base_options=BaseOptions(model_asset_path=str(model_path)),
+        running_mode=VisionRunningMode.IMAGE,
+        num_hands=2,
+        min_hand_detection_confidence=0.5,
+        min_hand_presence_confidence=0.5,
+        min_tracking_confidence=0.5,
+    )
+    return HandLandmarker.create_from_options(options)
+
+
 def extract_keypoints_from_video(video_path: str) -> np.ndarray:
     """
-    Run MediaPipe Holistic on every frame of a video and return
-    a (T, 126) array of hand keypoints.
-
-    Missing hands are filled with zeros.
+    Run MediaPipe HandLandmarker on every frame of a video and return
+    a (T, 126) array of hand keypoints. Uses Tasks API (mediapipe 0.10.30+).
     """
     try:
         import cv2
         import mediapipe as mp
     except ImportError:
-        raise ImportError("pip install mediapipe opencv-python")
+        raise ImportError("pip3 install mediapipe opencv-python")
 
-    holistic = mp.tasks.vision.HolisticLandmarker if hasattr(mp, 'tasks') else None
-
-    # Use legacy solutions API with compatibility shim
-    import mediapipe.python.solutions.holistic as _holistic_mod
-    holistic = _holistic_mod.Holistic(
-        min_detection_confidence=0.5,
-        min_tracking_confidence=0.5,
-        static_image_mode=False)
-
+    detector = _get_hand_detector()
     cap = cv2.VideoCapture(video_path)
     frames_kpts = []
 
@@ -63,23 +79,25 @@ def extract_keypoints_from_video(video_path: str) -> np.ndarray:
         ret, frame = cap.read()
         if not ret:
             break
-        rgb     = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = holistic.process(rgb)
+        rgb      = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+        result   = detector.detect(mp_image)
 
-        lh = (np.array([[lm.x, lm.y, lm.z]
-                         for lm in results.left_hand_landmarks.landmark],
-                        dtype=np.float32).flatten()
-              if results.left_hand_landmarks else np.zeros(63, dtype=np.float32))
-
-        rh = (np.array([[lm.x, lm.y, lm.z]
-                         for lm in results.right_hand_landmarks.landmark],
-                        dtype=np.float32).flatten()
-              if results.right_hand_landmarks else np.zeros(63, dtype=np.float32))
-
-        frames_kpts.append(np.concatenate([lh, rh]))  # (126,)
+        lh = np.zeros(63, dtype=np.float32)
+        rh = np.zeros(63, dtype=np.float32)
+        for i, hand_landmarks in enumerate(result.hand_landmarks):
+            handedness = result.handedness[i][0].category_name
+            coords = np.array([[lm.x, lm.y, lm.z]
+                                for lm in hand_landmarks],
+                               dtype=np.float32).flatten()
+            if handedness == "Left":
+                lh = coords
+            else:
+                rh = coords
+        frames_kpts.append(np.concatenate([lh, rh]))
 
     cap.release()
-    holistic.close()
+    detector.close()
     return np.stack(frames_kpts) if frames_kpts else np.zeros((1, KEYPOINT_DIM))
 
 
