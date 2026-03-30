@@ -200,11 +200,11 @@ def flip_keypoints(kpts: np.ndarray) -> np.ndarray:
     flipped = kpts.copy()
     lh = kpts[:, :63].copy()
     rh = kpts[:, 63:].copy()
-    # Swap hands and flip x coordinate (index 0, 3, 6, ... of each landmark)
-    lh[:, 0::3] = 1.0 - rh[:, 0::3]
-    rh[:, 0::3] = 1.0 - kpts[:, 0::3]  # original lh
-    flipped[:, :63] = rh
-    flipped[:, 63:] = lh
+    # Flip x coordinate of each hand independently, then swap positions
+    rh[:, 0::3] = 1.0 - rh[:, 0::3]  # flip right-hand x
+    lh[:, 0::3] = 1.0 - lh[:, 0::3]  # flip left-hand x
+    flipped[:, :63] = rh   # old right hand → new left position
+    flipped[:, 63:] = lh   # old left hand  → new right position
     return flipped
 
 

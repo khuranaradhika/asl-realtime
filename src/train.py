@@ -17,6 +17,7 @@ from pathlib import Path
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim as optim
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from tqdm import tqdm
@@ -33,7 +34,35 @@ CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 
 # ─── Training ─────────────────────────────────────────────────────────────────
 
-def train_one_epoch(model, loader, optimizer, ctc_loss, device, vocab_size):
+def distillation_loss(student_log_probs: torch.Tensor,
+                      teacher_log_probs: torch.Tensor,
+                      temperature: float = 4.0) -> torch.Tensor:
+    """
+    Soft-target knowledge distillation loss between student and teacher outputs.
+    KL divergence between softened teacher and student distributions,
+    averaged over time and batch.
+
+    Args:
+        student_log_probs: (T, B, C) student log-softmax outputs
+        teacher_log_probs: (T, B, C) teacher log-softmax outputs (detached)
+        temperature:       softens both distributions; higher = softer
+
+    Returns:
+        scalar KL divergence loss
+    """
+    # Soften: divide log-probs by T and re-normalize in log space
+    # log_softmax(logits / T) = (logits / T) - log(sum(exp(logits/T)))
+    # Given log_probs = logits - log(sum(exp(logits))), we can recover logits
+    # approximately by treating log_probs as logits and rescaling.
+    student_soft = F.log_softmax(student_log_probs / temperature, dim=-1)  # (T, B, C)
+    teacher_soft = F.softmax(teacher_log_probs / temperature, dim=-1)       # (T, B, C)
+    # KL(teacher || student) = sum(teacher * (log_teacher - log_student))
+    kl = F.kl_div(student_soft, teacher_soft, reduction="batchmean")
+    return kl * (temperature ** 2)  # scale back as per Hinton et al.
+
+
+def train_one_epoch(model, loader, optimizer, ctc_loss, device, vocab_size,
+                    teacher=None, distill_alpha=0.5, distill_temp=4.0):
     model.train()
     total_loss = 0.0
     n_batches  = 0
@@ -48,7 +77,15 @@ def train_one_epoch(model, loader, optimizer, ctc_loss, device, vocab_size):
         log_prob = model(kpts, src_key_padding_mask=mask)  # (T, B, C)
 
         # CTCLoss expects (T, B, C), targets (B,) or (sum_of_label_lengths,)
-        loss = ctc_loss(log_prob, labels, in_lens, lb_lens)
+        ctc = ctc_loss(log_prob, labels, in_lens, lb_lens)
+
+        if teacher is not None:
+            with torch.no_grad():
+                teacher_log_prob = teacher(kpts, src_key_padding_mask=mask)
+            kd   = distillation_loss(log_prob, teacher_log_prob, temperature=distill_temp)
+            loss = (1.0 - distill_alpha) * ctc + distill_alpha * kd
+        else:
+            loss = ctc
 
         optimizer.zero_grad()
         loss.backward()
@@ -150,6 +187,20 @@ def main(args):
     model = model.to(device)
     print(f"Model parameters: {model.count_parameters():,}")
 
+    # Optional teacher for distillation
+    teacher_model = None
+    if args.distill:
+        if not args.teacher_checkpoint:
+            raise ValueError("--distill requires --teacher_checkpoint")
+        teacher_model = build_teacher_model(n_classes=args.vocab).to(device)
+        ckpt = torch.load(args.teacher_checkpoint, map_location=device)
+        teacher_model.load_state_dict(ckpt["model_state"])
+        teacher_model.eval()
+        for p in teacher_model.parameters():
+            p.requires_grad_(False)
+        run_name += "_distill"
+        print(f"Teacher loaded from {args.teacher_checkpoint}")
+
     # Loss, optimizer, scheduler
     ctc_loss  = nn.CTCLoss(blank=args.vocab, reduction="mean", zero_infinity=True)
     optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
@@ -161,8 +212,11 @@ def main(args):
 
     for epoch in range(1, args.epochs + 1):
         t0         = time.time()
-        train_loss = train_one_epoch(model, train_loader, optimizer,
-                                     ctc_loss, device, args.vocab)
+        train_loss = train_one_epoch(model, train_loader, optimizer, ctc_loss,
+                                     device, args.vocab,
+                                     teacher=teacher_model,
+                                     distill_alpha=args.distill_alpha,
+                                     distill_temp=args.distill_temp)
         top1, top5 = evaluate(model, val_loader, device, args.vocab)
         scheduler.step()
 
@@ -209,5 +263,13 @@ if __name__ == "__main__":
     parser.add_argument("--workers",    type=int,   default=4)
     parser.add_argument("--teacher",    action="store_true",
                         help="Train the larger teacher model instead of student")
+    parser.add_argument("--distill",    action="store_true",
+                        help="Enable knowledge distillation from a pretrained teacher")
+    parser.add_argument("--teacher_checkpoint", type=str, default=None,
+                        help="Path to pretrained teacher .pt checkpoint (required with --distill)")
+    parser.add_argument("--distill_alpha", type=float, default=0.5,
+                        help="Weight for KD loss: total = (1-alpha)*CTC + alpha*KD")
+    parser.add_argument("--distill_temp",  type=float, default=4.0,
+                        help="Softmax temperature for distillation")
     args = parser.parse_args()
     main(args)
