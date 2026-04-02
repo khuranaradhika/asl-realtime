@@ -30,7 +30,7 @@ except ImportError:
 
 ANNO_PATH   = Path("data/raw/wlasl/WLASL_v0.3.json")
 SAVE_DIR    = Path("data/raw/wlasl/videos")
-TIMEOUT     = 20
+TIMEOUT     = 5
 MIN_BYTES   = 5000
 MAX_WORKERS = 8
 HEADERS     = {
