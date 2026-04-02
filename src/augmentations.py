@@ -37,8 +37,8 @@ def flip_keypoints(kpts: np.ndarray) -> np.ndarray:
     flipped = kpts.copy()
     lh = kpts[:, :63].copy()
     rh = kpts[:, 63:].copy()
-    lh[:, 0::3] = 1.0 - rh[:, 0::3]
-    rh[:, 0::3] = 1.0 - kpts[:, 0::3]
+    rh[:, 0::3] = 1.0 - rh[:, 0::3]
+    lh[:, 0::3] = 1.0 - lh[:, 0::3]
     flipped[:, :63] = rh
     flipped[:, 63:] = lh
     return flipped
