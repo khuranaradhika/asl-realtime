@@ -62,11 +62,14 @@ def train_one_epoch(model, loader, optimizer, ctc_loss, device, vocab_size):
 
 
 @torch.no_grad()
-def evaluate(model, loader, device, vocab_size):
+def evaluate(model, loader, device, vocab_size, per_class=False):
     model.eval()
     correct_top1 = 0
     correct_top5 = 0
     total        = 0
+
+    # per-class tracking: {label_idx: [correct, total]}
+    class_stats = {}
 
     for batch in tqdm(loader, desc="Evaluating", leave=False):
         kpts    = batch["keypoints"].to(device)
@@ -83,17 +86,26 @@ def evaluate(model, loader, device, vocab_size):
             avg_prob = log_prob[:T_i, i, :vocab_size].mean(dim=0)  # (C,) exclude blank
 
             pred_top1 = avg_prob.argmax().item()
-            if pred_top1 == labels[i].item():
-                correct_top1 += 1
+            label     = labels[i].item()
+            hit       = int(pred_top1 == label)
+
+            correct_top1 += hit
+            if label not in class_stats:
+                class_stats[label] = [0, 0]
+            class_stats[label][0] += hit
+            class_stats[label][1] += 1
 
             top5 = avg_prob.topk(5).indices.tolist()
-            if labels[i].item() in top5:
+            if label in top5:
                 correct_top5 += 1
 
             total += 1
 
     top1 = correct_top1 / max(total, 1)
     top5 = correct_top5 / max(total, 1)
+
+    if per_class:
+        return top1, top5, class_stats
     return top1, top5
 
 
@@ -192,6 +204,44 @@ def main(args):
         json.dump(history, f, indent=2)
 
     print(f"\nTraining complete. Best Top-1: {best_top1:.3f}")
+
+    # Per-class accuracy breakdown (final epoch)
+    print("\n=== Per-class accuracy breakdown ===")
+    _, _, class_stats = evaluate(model, val_loader, device, args.vocab, per_class=True)
+
+    vocab_path = Path("data/processed/vocab.json")
+    idx2word   = {}
+    if vocab_path.exists():
+        with open(vocab_path) as f:
+            idx2word = {v: k for k, v in json.load(f).items()}
+
+    per_class_results = []
+    for label_idx, (correct, total_c) in sorted(class_stats.items()):
+        acc  = correct / max(total_c, 1)
+        word = idx2word.get(label_idx, str(label_idx))
+        per_class_results.append({
+            "label_idx": label_idx,
+            "word":      word,
+            "correct":   correct,
+            "total":     total_c,
+            "accuracy":  round(acc, 4),
+        })
+
+    # Print top-10 and bottom-10
+    sorted_by_acc = sorted(per_class_results, key=lambda x: -x["accuracy"])
+    print("Top-10 classes:")
+    for r in sorted_by_acc[:10]:
+        print(f"  {r['word']:20s} {r['correct']}/{r['total']}  ({r['accuracy']*100:.0f}%)")
+    print("Bottom-10 classes:")
+    for r in sorted_by_acc[-10:]:
+        print(f"  {r['word']:20s} {r['correct']}/{r['total']}  ({r['accuracy']*100:.0f}%)")
+
+    zero_acc = sum(1 for r in per_class_results if r["accuracy"] == 0)
+    print(f"\nClasses with 0% accuracy: {zero_acc}/{len(per_class_results)}")
+
+    with open(results_dir / f"{run_name}_per_class.json", "w") as f:
+        json.dump(per_class_results, f, indent=2)
+    print(f"Per-class results saved → results/metrics/{run_name}_per_class.json")
 
 
 if __name__ == "__main__":
