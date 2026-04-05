@@ -76,23 +76,17 @@ def evaluate(model, loader, device, vocab_size):
         mask     = make_padding_mask(in_lens, max_len=kpts.size(1)).to(device)
         log_prob = model(kpts, src_key_padding_mask=mask)  # (T, B, C)
 
-        # Greedy decode: take argmax at each timestep, collapse CTC
-        preds_seq = log_prob.argmax(dim=-1).permute(1, 0)  # (B, T)
-        preds     = greedy_decode(preds_seq, blank=vocab_size)  # list of B tensors
+        # Use mean log_prob over non-padded frames for both Top-1 and Top-5.
+        # More robust than CTC greedy decode for isolated word classification.
+        for i in range(kpts.size(0)):
+            T_i      = in_lens[i].item()
+            avg_prob = log_prob[:T_i, i, :vocab_size].mean(dim=0)  # (C,) exclude blank
 
-        # For isolated sign recognition, prediction = most common non-blank token
-        for i, pred_seq in enumerate(preds):
-            if len(pred_seq) == 0:
-                continue
-            # Top-1
-            pred_label = pred_seq[0]
-            if pred_label == labels[i].item():
+            pred_top1 = avg_prob.argmax().item()
+            if pred_top1 == labels[i].item():
                 correct_top1 += 1
 
-            # Top-5: use log_prob mean over non-padded frames
-            T_i       = in_lens[i].item()
-            avg_prob  = log_prob[:T_i, i, :].mean(dim=0)  # (C,)
-            top5      = avg_prob.topk(5).indices.tolist()
+            top5 = avg_prob.topk(5).indices.tolist()
             if labels[i].item() in top5:
                 correct_top5 += 1
 
@@ -135,9 +129,11 @@ def main(args):
 
     # Data
     train_loader = get_dataloader("train", vocab_size=args.vocab,
-                                  batch_size=args.batch_size, num_workers=args.workers)
+                                  batch_size=args.batch_size, num_workers=args.workers,
+                                  augment=not args.no_augment, combined=args.combined)
     val_loader   = get_dataloader("val",   vocab_size=args.vocab,
-                                  batch_size=args.batch_size, num_workers=args.workers)
+                                  batch_size=args.batch_size, num_workers=args.workers,
+                                  combined=args.combined)
 
     # Model
     if args.teacher:
@@ -209,5 +205,9 @@ if __name__ == "__main__":
     parser.add_argument("--workers",    type=int,   default=4)
     parser.add_argument("--teacher",    action="store_true",
                         help="Train the larger teacher model instead of student")
+    parser.add_argument("--no-augment", action="store_true",
+                        help="Disable training augmentations (use for EXP-001 baseline)")
+    parser.add_argument("--combined",   action="store_true",
+                        help="Use combined WLASL+MS-ASL manifest for training")
     args = parser.parse_args()
     main(args)
