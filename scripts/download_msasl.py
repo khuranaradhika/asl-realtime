@@ -37,7 +37,7 @@ SPLITS     = ["train", "val", "test"]
 MIN_BYTES  = 5000
 MAX_WORKERS  = 2   # parallel video downloads — keep low to avoid YouTube rate limiting
 COOKIES_FILE = Path("data/raw/msasl/cookies.txt")  # export once with: yt-dlp --cookies-from-browser chrome --cookies data/raw/msasl/cookies.txt <any-yt-url>
-COOKIE_BROWSER = "safari"
+COOKIE_BROWSER = ""  # disabled — use cookies.txt file instead (see README)
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -64,7 +64,7 @@ def download_video(url: str, dest: Path) -> tuple[bool, str]:
         elif COOKIE_BROWSER:
             cmd += ["--cookies-from-browser", COOKIE_BROWSER]
         cmd += [
-            "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
+            "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/bestvideo/best",
             "--merge-output-format", "mp4",
             "-o", str(dest),
             "--quiet", "--no-warnings",
