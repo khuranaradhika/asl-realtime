@@ -5,11 +5,10 @@ Training loop for SignTransformer with CTC loss.
 Includes checkpointing, learning rate scheduling, and logging.
 
 Usage:
-    python src/train.py --vocab 100 --epochs 50 --d_model 128 --n_layers 3
-    python src/train.py --vocab 100 --epochs 100 --d_model 512 --n_layers 6  # teacher
+    python src/train.py --vocab 2000 --epochs 50 --d_model 128 --n_layers 3
+    python src/train.py --vocab 2000 --epochs 100 --teacher
 """
 
-import os
 import json
 import argparse
 import time
@@ -21,17 +20,11 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from tqdm import tqdm
 
+from src.config import CHECKPOINT_DIR
 from src.dataloader import get_dataloader
 from src.model import build_student_model, build_teacher_model, make_padding_mask
+from src.evaluate import evaluate
 
-
-# ─── Config ───────────────────────────────────────────────────────────────────
-
-CHECKPOINT_DIR = Path("models/checkpoints")
-CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
-
-
-# ─── Training ─────────────────────────────────────────────────────────────────
 
 def train_one_epoch(model, loader, optimizer, ctc_loss, device, vocab_size):
     model.train()
@@ -39,15 +32,14 @@ def train_one_epoch(model, loader, optimizer, ctc_loss, device, vocab_size):
     n_batches  = 0
 
     for batch in tqdm(loader, desc="Training", leave=False):
-        kpts    = batch["keypoints"].to(device)        # (B, T, 126)
-        labels  = batch["label"].to(device).squeeze(1) # (B,)
-        in_lens = batch["input_length"].to(device)     # (B,)
-        lb_lens = batch["label_length"].to(device)     # (B,) all ones
+        kpts    = batch["keypoints"].to(device)
+        labels  = batch["label"].to(device).squeeze(1)
+        in_lens = batch["input_length"].to(device)
+        lb_lens = batch["label_length"].to(device)
 
         mask     = make_padding_mask(in_lens, max_len=kpts.size(1)).to(device)
         log_prob = model(kpts, src_key_padding_mask=mask)  # (T, B, C)
 
-        # CTCLoss expects (T, B, C), targets (B,) or (sum_of_label_lengths,)
         loss = ctc_loss(log_prob, labels, in_lens, lb_lens)
 
         optimizer.zero_grad()
@@ -136,10 +128,10 @@ def greedy_decode(preds_seq: torch.Tensor, blank: int):
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
 def main(args):
+    CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
 
-    # Data
     train_loader = get_dataloader("train", vocab_size=args.vocab,
                                   batch_size=args.batch_size, num_workers=args.workers,
                                   augment=not args.no_augment, combined=args.combined)
@@ -147,25 +139,22 @@ def main(args):
                                   batch_size=args.batch_size, num_workers=args.workers,
                                   combined=args.combined)
 
-    # Model
     if args.teacher:
-        model = build_teacher_model(n_classes=args.vocab)
+        model    = build_teacher_model(n_classes=args.vocab)
         run_name = f"teacher_v{args.vocab}"
     else:
-        model = build_student_model(n_classes=args.vocab)
+        model    = build_student_model(n_classes=args.vocab)
         run_name = f"student_d{args.d_model}_l{args.n_layers}_v{args.vocab}"
 
     model = model.to(device)
     print(f"Model parameters: {model.count_parameters():,}")
 
-    # Loss, optimizer, scheduler
     ctc_loss  = nn.CTCLoss(blank=args.vocab, reduction="mean", zero_infinity=True)
     optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     scheduler = CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=1e-6)
 
-    # Training loop
-    best_top1    = 0.0
-    history      = []
+    best_top1 = 0.0
+    history   = []
 
     for epoch in range(1, args.epochs + 1):
         t0         = time.time()
@@ -181,23 +170,20 @@ def main(args):
               f"LR: {scheduler.get_last_lr()[0]:.2e} | "
               f"{elapsed:.1f}s")
 
-        history.append({"epoch": epoch, "loss": train_loss,
-                         "top1": top1, "top5": top5})
+        history.append({"epoch": epoch, "loss": train_loss, "top1": top1, "top5": top5})
 
-        # Save best checkpoint
         if top1 > best_top1:
             best_top1 = top1
             ckpt_path = CHECKPOINT_DIR / f"{run_name}_best.pt"
             torch.save({
-                "epoch":      epoch,
+                "epoch":       epoch,
                 "model_state": model.state_dict(),
-                "top1":       top1,
-                "top5":       top5,
-                "args":       vars(args),
+                "top1":        top1,
+                "top5":        top5,
+                "args":        vars(args),
             }, ckpt_path)
             print(f"  ✓ New best: {top1:.3f} → saved to {ckpt_path}")
 
-    # Save history
     results_dir = Path("results/metrics")
     results_dir.mkdir(parents=True, exist_ok=True)
     with open(results_dir / f"{run_name}_history.json", "w") as f:
@@ -246,7 +232,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train SignTransformer on WLASL")
-    parser.add_argument("--vocab",      type=int,   default=100)
+    parser.add_argument("--vocab",      type=int,   default=2000)
     parser.add_argument("--epochs",     type=int,   default=50)
     parser.add_argument("--batch_size", type=int,   default=32)
     parser.add_argument("--lr",         type=float, default=3e-4)
