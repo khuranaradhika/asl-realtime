@@ -16,13 +16,10 @@ Usage:
 
     # Then use in training:
     from src.dataloader import get_dataloader
-    loader = get_dataloader(split='train', vocab_size=100, batch_size=32)
+    loader = get_dataloader(split='train', vocab_size=2000, batch_size=32)
 """
 
-import os
 import json
-import math
-import argparse
 import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -307,13 +304,10 @@ class WLASLDataset(Dataset):
         sample = self.samples[idx]
         kpts   = np.load(sample["path"]).astype(np.float32)  # (T, 126)
 
-        # Augment
         kpts = augment_keypoints(kpts, training=self.augment)
 
-        # Record actual length before padding
         T = min(kpts.shape[0], self.max_len)
 
-        # Pad or truncate to max_len
         if kpts.shape[0] < self.max_len:
             pad  = np.zeros((self.max_len - kpts.shape[0], KEYPOINT_DIM), dtype=np.float32)
             kpts = np.vstack([kpts, pad])
@@ -321,7 +315,7 @@ class WLASLDataset(Dataset):
             kpts = kpts[:self.max_len]
 
         return {
-            "keypoints":    torch.tensor(kpts, dtype=torch.float32),   # (max_len, 126)
+            "keypoints":    torch.tensor(kpts, dtype=torch.float32),          # (max_len, 126)
             "label":        torch.tensor([sample["label_idx"]], dtype=torch.long),  # (1,)
             "input_length": torch.tensor(T, dtype=torch.long),
             "label_length": torch.tensor(1, dtype=torch.long),
@@ -343,11 +337,10 @@ def get_dataloader(split: str = "train", vocab_size: int = 100,
         combined: if True, load combined WLASL+MS-ASL manifest.
 
     Example:
-        train_loader = get_dataloader('train', vocab_size=100, batch_size=32)
+        train_loader = get_dataloader('train', vocab_size=2000, batch_size=32)
         for batch in train_loader:
-            kpts   = batch['keypoints']       # (B, T, 126)
-            labels = batch['label']           # (B, 1)
-            ...
+            kpts   = batch['keypoints']   # (B, T, 126)
+            labels = batch['label']       # (B, 1)
     """
     dataset = WLASLDataset(
         split=split,

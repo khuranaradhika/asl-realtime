@@ -4,20 +4,44 @@
 
 > Keypoint-based temporal transformer for real-time American Sign Language word recognition on CPU.
 
+## How To Get Set Up
+
+### 1. Create and activate virtual environment
+```bash
+python3 -m venv venv
+source venv/bin/activate        # Mac/Linux
+```
+
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+brew install ffmpeg              # Mac — needed for keypoint extraction and MS-ASL trimming
+```
+
+### 3. Download WLASL videos
+```bash
+python3 scripts/download_wlasl.py
+```
+This downloads ~8,500 videos to `data/raw/wlasl/videos/`. If YouTube downloads fail due to bot detection, export your browser cookies and save as `data/raw/wlasl/cookies.txt` — the script picks it up automatically.
+
+### 4. Extract keypoints
+```bash
+python3 scripts/preprocess.py --split train --vocab 2000
+python3 scripts/preprocess.py --split val   --vocab 2000
+python3 scripts/preprocess.py --split test  --vocab 2000
+```
+Saves `.npy` keypoint files and split manifests to `data/processed/`. Downloads a ~25MB MediaPipe model on first run.
+
+
 ---
 
 ## Group Members
 | Name | GitHub | Role |
 |------|--------|------|
-| Gyula Planky | [@gyuszix](https://github.com/gyuszix) |  |
-| Hrishikesh Pradhan | [@hspgit](https://github.com/hspgit) |  |
-| Jian Gao | [@iamjaygao](https://github.com/iamjaygao) |  |
-| Radhika Khurana | [@khuranaradhika](https://github.com/khuranaradhika) |  |
-
-Data pipeline + augmentation
-Model architecture + training
-CTC decoder + distillation
-ONNX export + evaluation + demo
+| Jian Gao | [@iamjaygao](https://github.com/iamjaygao) | Data pipeline + augmentation |
+| Hrishikesh Pradhan | [@hspgit](https://github.com/hspgit) | Model architecture + training |
+| Radhika Khurana | [@khuranaradhika](https://github.com/khuranaradhika) | CTC decoder + distillation |
+| Gyula Planky | [@gyuszix](https://github.com/gyuszix) | ONNX export + evaluation + demo |
 ---
 
 ## Project Overview
@@ -27,7 +51,7 @@ We build a lightweight transformer that takes hand keypoints extracted from a we
 **Pipeline:**
 ```
 Webcam → MediaPipe HandLandmarker → Temporal Transformer → CTC Decoder → Text
-          (keypoints, ~8ms/frame)    (~1.2M params)          (greedy)
+          (keypoints, ~8ms/frame)    (~672K params, 2000 classes)  (greedy)
 ```
 
 ---
@@ -54,21 +78,21 @@ asl-realtime/
 │       └── vocab.json                # Sign → index mapping
 │
 ├── src/
-│   ├── dataloader.py         # WLASLDataset, DataLoader, augmentations
+│   ├── config.py             # Shared constants and paths
+│   ├── augmentations.py      # Keypoint transforms (flip, jitter, noise, normalize)
+│   ├── keypoints.py          # MediaPipe extraction utilities (shared by preprocess + demo)
+│   ├── dataloader.py         # WLASLDataset + get_dataloader
 │   ├── model.py              # SignTransformer, PositionalEncoding
+│   ├── decode.py             # Greedy CTC decode (+ beam search, Person 3)
+│   ├── evaluate.py           # Top-1/Top-5 evaluation (+ WER, Person 3)
 │   ├── train.py              # Training loop, checkpointing, logging
 │   ├── export.py             # ONNX export + latency benchmark
 │   └── demo.py               # Real-time webcam demo
 │
 ├── scripts/
+│   ├── preprocess.py         # One-time keypoint extraction from raw videos
 │   ├── download_wlasl.py     # WLASL video downloader (direct links + yt-dlp)
 │   └── download_msasl.py     # MS-ASL video downloader (YouTube via yt-dlp + ffmpeg trim)
-│
-├── notebooks/
-│   ├── 01_eda.ipynb          # Exploratory analysis on WLASL
-│   ├── 02_baseline.ipynb     # Baseline training experiments
-│   ├── 03_ablations.ipynb    # Ablation study results + plots
-│   └── 04_demo_test.ipynb    # Demo prototype
 │
 ├── models/
 │   ├── checkpoints/          # .pt checkpoint files (gitignored)
@@ -171,9 +195,9 @@ python3 scripts/download_msasl.py
 Run after downloading videos. Uses MediaPipe HandLandmarker (Tasks API, compatible with mediapipe 0.10.30+). Downloads a ~25MB model file on first run automatically.
 
 ```bash
-python3 src/dataloader.py --extract --split train --vocab 100
-python3 src/dataloader.py --extract --split val   --vocab 100
-python3 src/dataloader.py --extract --split test  --vocab 100
+python3 scripts/preprocess.py --split train --vocab 2000
+python3 scripts/preprocess.py --split val   --vocab 2000
+python3 scripts/preprocess.py --split test  --vocab 2000
 ```
 
 ---
@@ -181,11 +205,11 @@ python3 src/dataloader.py --extract --split test  --vocab 100
 ## Training
 
 ```bash
-# Student model (CPU-deployable, ~1.2M params)
-python3 src/train.py --vocab 100 --epochs 50 --d_model 128 --n_layers 3
+# Student model (CPU-deployable, ~672K params)
+python3 src/train.py --vocab 2000 --epochs 50 --d_model 128 --n_layers 3
 
-# Teacher model (GPU recommended, ~18M params)
-python3 src/train.py --vocab 100 --epochs 100 --teacher
+# Teacher model (GPU recommended)
+python3 src/train.py --vocab 2000 --epochs 100 --teacher
 ```
 
 Checkpoints save to `models/checkpoints/` automatically.
@@ -225,10 +249,6 @@ python3 src/demo.py --model models/sign_model.onnx --vocab 100
   - e.g. `feature/gyula-mediapipe-pipeline`
   - e.g. `feature/radhika-onnx-export`
 - Open a PR → at least **one review** → merge
-- Clear notebook outputs before committing:
-  ```bash
-  jupyter nbconvert --clear-output --inplace notebooks/*.ipynb
-  ```
 - **Never commit** `cookies.txt`, `failed_downloads.jsonl`, or anything in `data/raw/*/videos/`
 
 ---
