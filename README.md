@@ -113,20 +113,6 @@ asl-realtime/
 
 ---
 
-## Setup
-
-### 1. Clone and install
-```bash
-git clone https://github.com/khuranaradhika/asl-realtime.git
-cd asl-realtime
-python3 -m venv venv
-source venv/bin/activate        # Mac/Linux
-# venv\Scripts\activate         # Windows
-pip install -r requirements.txt
-```
-
----
-
 ## Datasets
 
 ### WLASL (primary — train + eval)
@@ -187,18 +173,6 @@ python3 scripts/download_msasl.py
 - Only the overlapping sign classes between WLASL and MS-ASL are used for cross-dataset eval
 - Download takes several hours — each clip requires downloading the full YouTube video then trimming to the annotated segment
 - **Don't block on this.** Get WLASL training running first. MS-ASL eval is a one-day add-on.
-
----
-
-## Keypoint Extraction
-
-Run after downloading videos. Uses MediaPipe HandLandmarker (Tasks API, compatible with mediapipe 0.10.30+). Downloads a ~25MB model file on first run automatically.
-
-```bash
-python3 scripts/preprocess.py --split train --vocab 2000
-python3 scripts/preprocess.py --split val   --vocab 2000
-python3 scripts/preprocess.py --split test  --vocab 2000
-```
 
 ---
 
