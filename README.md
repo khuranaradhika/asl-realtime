@@ -4,6 +4,35 @@
 
 > Keypoint-based temporal transformer for real-time American Sign Language word recognition on CPU.
 
+## How To Get Set Up
+
+### 1. Create and activate virtual environment
+```bash
+python3 -m venv venv
+source venv/bin/activate        # Mac/Linux
+```
+
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+brew install ffmpeg              # Mac — needed for keypoint extraction and MS-ASL trimming
+```
+
+### 3. Download WLASL videos
+```bash
+python3 scripts/download_wlasl.py
+```
+This downloads ~8,500 videos to `data/raw/wlasl/videos/`. If YouTube downloads fail due to bot detection, export your browser cookies and save as `data/raw/wlasl/cookies.txt` — the script picks it up automatically.
+
+### 4. Extract keypoints
+```bash
+python3 scripts/preprocess.py --split train --vocab 2000
+python3 scripts/preprocess.py --split val   --vocab 2000
+python3 scripts/preprocess.py --split test  --vocab 2000
+```
+Saves `.npy` keypoint files and split manifests to `data/processed/`. Downloads a ~25MB MediaPipe model on first run.
+
+
 ---
 
 ## Group Members
