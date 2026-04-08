@@ -1,38 +1,59 @@
 [
   {
+    "label_idx": 0,
+    "word": "book",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
     "label_idx": 1,
     "word": "drink",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 2,
     "word": "computer",
-    "correct": 1,
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
+  },
+  {
+    "label_idx": 3,
+    "word": "before",
+    "correct": 0,
     "total": 2,
-    "accuracy": 0.5
+    "accuracy": 0.0
   },
   {
     "label_idx": 4,
     "word": "chair",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 5,
+    "word": "go",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
+  },
+  {
+    "label_idx": 6,
+    "word": "clothes",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
   },
   {
-    "label_idx": 5,
-    "word": "go",
+    "label_idx": 7,
+    "word": "who",
     "correct": 0,
     "total": 2,
     "accuracy": 0.0
-  },
-  {
-    "label_idx": 7,
-    "word": "who",
-    "correct": 1,
-    "total": 2,
-    "accuracy": 0.5
   },
   {
     "label_idx": 8,
@@ -45,7 +66,7 @@
     "label_idx": 9,
     "word": "cousin",
     "correct": 0,
-    "total": 2,
+    "total": 1,
     "accuracy": 0.0
   },
   {
@@ -73,22 +94,22 @@
     "label_idx": 13,
     "word": "no",
     "correct": 1,
-    "total": 1,
-    "accuracy": 1.0
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 14,
     "word": "thin",
     "correct": 1,
-    "total": 1,
-    "accuracy": 1.0
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 15,
     "word": "walk",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 16,
@@ -105,8 +126,8 @@
     "accuracy": 0.5
   },
   {
-    "label_idx": 19,
-    "word": "black",
+    "label_idx": 18,
+    "word": "all",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -122,22 +143,22 @@
     "label_idx": 21,
     "word": "finish",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 22,
     "word": "hot",
-    "correct": 0,
-    "total": 2,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
   },
   {
     "label_idx": 23,
     "word": "like",
-    "correct": 0,
-    "total": 2,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
   },
   {
     "label_idx": 24,
@@ -150,64 +171,78 @@
     "label_idx": 25,
     "word": "mother",
     "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 26,
-    "word": "now",
-    "correct": 0,
-    "total": 2,
+    "total": 3,
     "accuracy": 0.0
   },
   {
     "label_idx": 27,
     "word": "orange",
     "correct": 0,
-    "total": 2,
+    "total": 1,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 28,
+    "word": "table",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 29,
     "word": "thanksgiving",
-    "correct": 0,
+    "correct": 1,
     "total": 2,
-    "accuracy": 0.0
+    "accuracy": 0.5
   },
   {
     "label_idx": 30,
     "word": "what",
     "correct": 0,
-    "total": 2,
+    "total": 1,
     "accuracy": 0.0
   },
   {
     "label_idx": 31,
     "word": "woman",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 32,
+    "word": "bed",
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
   },
   {
     "label_idx": 33,
     "word": "blue",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 34,
     "word": "bowling",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 35,
+    "word": "can",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 36,
     "word": "dog",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
   },
   {
     "label_idx": 37,
@@ -220,7 +255,14 @@
     "label_idx": 38,
     "word": "fish",
     "correct": 0,
-    "total": 2,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 39,
+    "word": "graduate",
+    "correct": 0,
+    "total": 1,
     "accuracy": 0.0
   },
   {
@@ -231,39 +273,53 @@
     "accuracy": 0.0
   },
   {
-    "label_idx": 42,
-    "word": "kiss",
+    "label_idx": 41,
+    "word": "hearing",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
   },
   {
-    "label_idx": 43,
-    "word": "language",
-    "correct": 0,
-    "total": 2,
-    "accuracy": 0.0
+    "label_idx": 42,
+    "word": "kiss",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
   },
   {
     "label_idx": 44,
     "word": "later",
     "correct": 0,
-    "total": 3,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 45,
     "word": "man",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 46,
+    "word": "shirt",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 47,
+    "word": "study",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
   },
   {
     "label_idx": 48,
     "word": "tall",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
   },
   {
     "label_idx": 49,
@@ -273,11 +329,18 @@
     "accuracy": 0.0
   },
   {
-    "label_idx": 51,
-    "word": "accident",
+    "label_idx": 50,
+    "word": "wrong",
     "correct": 0,
     "total": 2,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 51,
+    "word": "accident",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
   },
   {
     "label_idx": 52,
@@ -287,53 +350,60 @@
     "accuracy": 0.0
   },
   {
-    "label_idx": 53,
-    "word": "bird",
-    "correct": 0,
-    "total": 2,
-    "accuracy": 0.0
-  },
-  {
     "label_idx": 54,
     "word": "change",
     "correct": 0,
-    "total": 2,
+    "total": 1,
     "accuracy": 0.0
   },
   {
     "label_idx": 55,
     "word": "color",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 56,
+    "word": "corn",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 57,
     "word": "cow",
     "correct": 0,
-    "total": 2,
+    "total": 1,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 58,
+    "word": "dance",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 59,
     "word": "dark",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 60,
     "word": "doctor",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
   },
   {
     "label_idx": 61,
     "word": "eat",
-    "correct": 0,
+    "correct": 1,
     "total": 2,
-    "accuracy": 0.0
+    "accuracy": 0.5
   },
   {
     "label_idx": 62,
@@ -343,8 +413,22 @@
     "accuracy": 0.0
   },
   {
+    "label_idx": 63,
+    "word": "forget",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
     "label_idx": 64,
     "word": "give",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 65,
+    "word": "last",
     "correct": 0,
     "total": 2,
     "accuracy": 0.0
@@ -352,86 +436,107 @@
   {
     "label_idx": 67,
     "word": "pink",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 68,
     "word": "pizza",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 69,
-    "word": "play",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 70,
     "word": "school",
     "correct": 0,
-    "total": 1,
+    "total": 3,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 71,
+    "word": "secretary",
+    "correct": 0,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 72,
     "word": "short",
     "correct": 0,
-    "total": 3,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 73,
     "word": "time",
-    "correct": 0,
+    "correct": 2,
     "total": 2,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 74,
     "word": "want",
-    "correct": 0,
-    "total": 2,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
   },
   {
-    "label_idx": 75,
-    "word": "work",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "label_idx": 76,
+    "word": "africa",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
   },
   {
     "label_idx": 77,
     "word": "basketball",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 80,
     "word": "but",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 81,
     "word": "cheat",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
+  },
+  {
+    "label_idx": 82,
+    "word": "city",
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
   },
   {
     "label_idx": 83,
     "word": "cook",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 84,
+    "word": "decide",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 85,
+    "word": "full",
+    "correct": 1,
+    "total": 4,
+    "accuracy": 0.25
   },
   {
     "label_idx": 86,
@@ -443,22 +548,22 @@
   {
     "label_idx": 87,
     "word": "jacket",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 88,
     "word": "letter",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 90,
     "word": "need",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
@@ -471,41 +576,48 @@
   {
     "label_idx": 92,
     "word": "paper",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 93,
     "word": "pull",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
   },
   {
     "label_idx": 94,
     "word": "purple",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 95,
     "word": "right",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 96,
     "word": "same",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 97,
     "word": "son",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 98,
+    "word": "tell",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -520,9 +632,9 @@
   {
     "label_idx": 101,
     "word": "wait",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 102,
@@ -532,39 +644,18 @@
     "accuracy": 0.0
   },
   {
-    "label_idx": 103,
-    "word": "wife",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
     "label_idx": 104,
     "word": "yellow",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 105,
     "word": "backpack",
-    "correct": 0,
-    "total": 2,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 106,
-    "word": "bar",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 107,
-    "word": "brother",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
   },
   {
     "label_idx": 108,
@@ -581,10 +672,24 @@
     "accuracy": 0.0
   },
   {
+    "label_idx": 110,
+    "word": "class",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
+  },
+  {
     "label_idx": 111,
     "word": "cry",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
+  },
+  {
+    "label_idx": 112,
+    "word": "different",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
@@ -595,8 +700,29 @@
     "accuracy": 0.0
   },
   {
+    "label_idx": 114,
+    "word": "green",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
     "label_idx": 115,
     "word": "hair",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 116,
+    "word": "have",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 117,
+    "word": "headache",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -604,13 +730,27 @@
   {
     "label_idx": 118,
     "word": "inform",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
+  },
+  {
+    "label_idx": 119,
+    "word": "knife",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 120,
     "word": "laugh",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
+  },
+  {
+    "label_idx": 121,
+    "word": "learn",
     "correct": 0,
     "total": 2,
     "accuracy": 0.0
@@ -618,44 +758,93 @@
   {
     "label_idx": 122,
     "word": "movie",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 123,
     "word": "rabbit",
-    "correct": 0,
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 124,
+    "word": "read",
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 125,
+    "word": "red",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 126,
     "word": "room",
     "correct": 0,
-    "total": 1,
+    "total": 3,
     "accuracy": 0.0
   },
   {
     "label_idx": 127,
     "word": "run",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 128,
+    "word": "show",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 129,
+    "word": "sick",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 130,
     "word": "snow",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 131,
+    "word": "take",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 132,
+    "word": "tea",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
+  },
+  {
+    "label_idx": 133,
+    "word": "teacher",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
   },
   {
-    "label_idx": 135,
-    "word": "why",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "label_idx": 136,
+    "word": "with",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 137,
@@ -674,13 +863,34 @@
   {
     "label_idx": 139,
     "word": "again",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 140,
+    "word": "bad",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 141,
+    "word": "ball",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 142,
+    "word": "bathroom",
     "correct": 1,
     "total": 1,
     "accuracy": 1.0
   },
   {
-    "label_idx": 140,
-    "word": "bad",
+    "label_idx": 143,
+    "word": "blanket",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -688,16 +898,16 @@
   {
     "label_idx": 144,
     "word": "buy",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 145,
     "word": "call",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 146,
@@ -710,28 +920,35 @@
     "label_idx": 147,
     "word": "cold",
     "correct": 1,
-    "total": 2,
-    "accuracy": 0.5
+    "total": 1,
+    "accuracy": 1.0
   },
   {
     "label_idx": 148,
     "word": "college",
-    "correct": 0,
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 149,
+    "word": "copy",
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 150,
     "word": "cute",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 151,
     "word": "daughter",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
@@ -742,39 +959,67 @@
     "accuracy": 0.0
   },
   {
+    "label_idx": 153,
+    "word": "first",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
     "label_idx": 154,
     "word": "friend",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 155,
+    "word": "good",
     "correct": 0,
-    "total": 1,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 156,
+    "word": "happy",
+    "correct": 0,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 157,
     "word": "home",
     "correct": 0,
-    "total": 2,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 160,
-    "word": "leave",
-    "correct": 0,
-    "total": 3,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 162,
-    "word": "lose",
-    "correct": 0,
     "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 158,
+    "word": "know",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 159,
+    "word": "late",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 161,
+    "word": "list",
+    "correct": 0,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 163,
     "word": "name",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 164,
@@ -784,8 +1029,29 @@
     "accuracy": 0.0
   },
   {
-    "label_idx": 170,
-    "word": "soon",
+    "label_idx": 166,
+    "word": "police",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 167,
+    "word": "problem",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 168,
+    "word": "remember",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 169,
+    "word": "share",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -793,76 +1059,132 @@
   {
     "label_idx": 171,
     "word": "stay",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
   },
   {
     "label_idx": 172,
     "word": "sunday",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 174,
     "word": "tired",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 2,
+    "total": 4,
+    "accuracy": 0.5
   },
   {
     "label_idx": 175,
     "word": "trade",
-    "correct": 0,
+    "correct": 1,
     "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 176,
+    "word": "travel",
+    "correct": 0,
+    "total": 1,
     "accuracy": 0.0
   },
   {
     "label_idx": 177,
     "word": "window",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 178,
-    "word": "you",
-    "correct": 0,
-    "total": 2,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 182,
-    "word": "arrive",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 185,
-    "word": "beard",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 186,
-    "word": "because",
     "correct": 1,
     "total": 1,
     "accuracy": 1.0
   },
   {
-    "label_idx": 187,
-    "word": "boy",
+    "label_idx": 178,
+    "word": "you",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 179,
+    "word": "example",
+    "correct": 2,
+    "total": 4,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 180,
+    "word": "about",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 181,
+    "word": "approve",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
   },
   {
+    "label_idx": 182,
+    "word": "arrive",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 183,
+    "word": "balance",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 184,
+    "word": "banana",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 185,
+    "word": "beard",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 186,
+    "word": "because",
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
+  },
+  {
+    "label_idx": 187,
+    "word": "boy",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 188,
+    "word": "business",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
     "label_idx": 189,
     "word": "careful",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 190,
+    "word": "center",
     "correct": 1,
     "total": 1,
     "accuracy": 1.0
@@ -875,11 +1197,18 @@
     "accuracy": 0.0
   },
   {
+    "label_idx": 192,
+    "word": "children",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
     "label_idx": 193,
     "word": "christmas",
-    "correct": 1,
-    "total": 1,
-    "accuracy": 1.0
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
   },
   {
     "label_idx": 194,
@@ -891,20 +1220,69 @@
   {
     "label_idx": 195,
     "word": "close",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 196,
+    "word": "convince",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 197,
+    "word": "country",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 198,
+    "word": "crash",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 199,
+    "word": "day",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 200,
+    "word": "discuss",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
   },
   {
     "label_idx": 201,
     "word": "dress",
-    "correct": 0,
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 202,
+    "word": "drive",
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 203,
     "word": "drop",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 204,
+    "word": "fat",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -913,8 +1291,22 @@
     "label_idx": 205,
     "word": "feel",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 206,
+    "word": "football",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 207,
+    "word": "future",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
   },
   {
     "label_idx": 208,
@@ -927,28 +1319,42 @@
     "label_idx": 209,
     "word": "girl",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 210,
     "word": "government",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 211,
     "word": "hear",
     "correct": 0,
-    "total": 2,
+    "total": 1,
     "accuracy": 0.0
+  },
+  {
+    "label_idx": 212,
+    "word": "here",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 213,
+    "word": "hope",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
   },
   {
     "label_idx": 214,
     "word": "house",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
@@ -961,15 +1367,22 @@
   {
     "label_idx": 216,
     "word": "interest",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 217,
     "word": "join",
     "correct": 0,
-    "total": 2,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 218,
+    "word": "light",
+    "correct": 0,
+    "total": 1,
     "accuracy": 0.0
   },
   {
@@ -982,22 +1395,22 @@
   {
     "label_idx": 220,
     "word": "make",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
   },
   {
     "label_idx": 221,
     "word": "mean",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 222,
     "word": "more",
-    "correct": 1,
-    "total": 1,
+    "correct": 2,
+    "total": 2,
     "accuracy": 1.0
   },
   {
@@ -1011,26 +1424,33 @@
     "label_idx": 224,
     "word": "music",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 225,
     "word": "new",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 226,
     "word": "none",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 227,
     "word": "office",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 228,
+    "word": "order",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -1039,15 +1459,29 @@
     "label_idx": 229,
     "word": "pants",
     "correct": 0,
-    "total": 1,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 230,
+    "word": "party",
+    "correct": 0,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 231,
     "word": "past",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 232,
+    "word": "pencil",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 233,
@@ -1066,48 +1500,90 @@
   {
     "label_idx": 235,
     "word": "practice",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 237,
-    "word": "restaurant",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 239,
-    "word": "russia",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 243,
-    "word": "since",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 244,
-    "word": "small",
     "correct": 1,
     "total": 1,
     "accuracy": 1.0
   },
   {
-    "label_idx": 245,
-    "word": "some",
+    "label_idx": 236,
+    "word": "president",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 237,
+    "word": "restaurant",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 238,
+    "word": "ride",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 239,
+    "word": "russia",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 240,
+    "word": "salt",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 241,
+    "word": "sandwich",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
   },
   {
+    "label_idx": 242,
+    "word": "sign",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 243,
+    "word": "since",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 244,
+    "word": "small",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 245,
+    "word": "some",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
     "label_idx": 246,
     "word": "south",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 247,
+    "word": "student",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -1115,6 +1591,55 @@
   {
     "label_idx": 248,
     "word": "teach",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 249,
+    "word": "theory",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 250,
+    "word": "tomato",
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
+  },
+  {
+    "label_idx": 251,
+    "word": "train",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 252,
+    "word": "ugly",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 253,
+    "word": "war",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 254,
+    "word": "where",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 255,
+    "word": "your",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -1122,16 +1647,16 @@
   {
     "label_idx": 256,
     "word": "always",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   },
   {
     "label_idx": 257,
     "word": "animal",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 258,
@@ -1143,6 +1668,13 @@
   {
     "label_idx": 259,
     "word": "baby",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 260,
+    "word": "back",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -1151,61 +1683,82 @@
     "label_idx": 261,
     "word": "bake",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 262,
     "word": "bath",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 264,
+    "word": "bring",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
   },
   {
+    "label_idx": 265,
+    "word": "catch",
+    "correct": 1,
+    "total": 3,
+    "accuracy": 0.3333
+  },
+  {
     "label_idx": 266,
     "word": "cereal",
     "correct": 0,
-    "total": 1,
+    "total": 2,
     "accuracy": 0.0
   },
   {
     "label_idx": 267,
     "word": "champion",
     "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 270,
+    "word": "crazy",
+    "correct": 0,
     "total": 2,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 268,
-    "word": "cheese",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
-    "label_idx": 269,
-    "word": "cough",
-    "correct": 0,
-    "total": 1,
     "accuracy": 0.0
   },
   {
     "label_idx": 271,
     "word": "delay",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 272,
     "word": "delicious",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 273,
+    "word": "disappear",
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
   },
   {
     "label_idx": 274,
     "word": "divorce",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 275,
+    "word": "draw",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -1213,9 +1766,9 @@
   {
     "label_idx": 276,
     "word": "east",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
   },
   {
     "label_idx": 277,
@@ -1225,8 +1778,29 @@
     "accuracy": 0.0
   },
   {
+    "label_idx": 278,
+    "word": "egg",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
     "label_idx": 279,
     "word": "environment",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 280,
+    "word": "father",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 281,
+    "word": "fault",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -1239,43 +1813,43 @@
     "accuracy": 0.0
   },
   {
-    "label_idx": 283,
-    "word": "friendly",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
-  },
-  {
     "label_idx": 284,
     "word": "glasses",
     "correct": 0,
-    "total": 1,
+    "total": 3,
     "accuracy": 0.0
   },
   {
     "label_idx": 285,
     "word": "halloween",
-    "correct": 0,
+    "correct": 1,
     "total": 2,
-    "accuracy": 0.0
+    "accuracy": 0.5
   },
   {
     "label_idx": 286,
     "word": "hard",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
-    "label_idx": 287,
-    "word": "heart",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "label_idx": 288,
+    "word": "hour",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
-    "label_idx": 291,
-    "word": "improve",
+    "label_idx": 289,
+    "word": "humble",
+    "correct": 2,
+    "total": 2,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 290,
+    "word": "hurry",
     "correct": 0,
     "total": 1,
     "accuracy": 0.0
@@ -1284,22 +1858,43 @@
     "label_idx": 292,
     "word": "internet",
     "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 293,
+    "word": "jump",
+    "correct": 1,
+    "total": 4,
+    "accuracy": 0.25
+  },
+  {
+    "label_idx": 294,
+    "word": "kill",
+    "correct": 0,
     "total": 1,
     "accuracy": 0.0
   },
   {
     "label_idx": 295,
     "word": "law",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 296,
+    "word": "match",
+    "correct": 2,
+    "total": 3,
+    "accuracy": 0.6667
   },
   {
     "label_idx": 297,
     "word": "meat",
-    "correct": 0,
-    "total": 1,
-    "accuracy": 0.0
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
   },
   {
     "label_idx": 298,
@@ -1311,8 +1906,8 @@
   {
     "label_idx": 299,
     "word": "money",
-    "correct": 0,
+    "correct": 1,
     "total": 1,
-    "accuracy": 0.0
+    "accuracy": 1.0
   }
 ]

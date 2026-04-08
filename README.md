@@ -258,13 +258,14 @@ Open `http://localhost:8000`. MediaPipe runs in the browser — only 126 keypoin
 
 | Model | Top-1 (WLASL val) | Top-5 (WLASL val) | Top-1 (MS-ASL) | CPU Latency | Params |
 |-------|------------------|------------------|----------------|-------------|--------|
+| Transformer + aug (150 ep) | **40.8%** | **56.4%** | — | — | ~452K |
+| Transformer + aug (100 ep) | 11.4% | 20.1% | — | — | ~452K |
+| Transformer (CTC, 50 ep) | 6.7% | 7.1% | — | — | ~452K |
 | 1D CNN | — | — | — | — | ~450K |
 | BiLSTM | — | — | — | — | ~735K |
 | Transformer (no aug) | — | — | — | — | ~452K |
-| Transformer + aug | — | — | — | — | ~452K |
-| Transformer (CTC, step 1) | 6.7% | 7.1% | — | — | ~452K |
 
-*Results will be updated as experiments complete. See `docs/experiments.md` for per-run details.*
+*See `docs/experiments.md` for full per-run details.*
 
 ---
 
