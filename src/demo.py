@@ -18,6 +18,7 @@ from pathlib import Path
 from src.config import KEYPOINT_DIM, WINDOW_FRAMES, SMOOTH_WINDOW
 from src.decode import greedy_decode_sequence
 from src.keypoints import get_hand_detector, extract_keypoints_from_frame
+from src.augmentations import normalize_keypoints
 
 
 def load_vocab(vocab_path: str = "data/processed/vocab.json") -> dict:
@@ -87,7 +88,8 @@ def run_demo(onnx_path: str, vocab_size: int = 2000):
         frame_buffer.append(kpts)
 
         if len(frame_buffer) == WINDOW_FRAMES and (time.time() - last_inference) > 0.5:
-            seq       = np.stack(list(frame_buffer), axis=0)[np.newaxis].astype(np.float32)
+            seq_arr   = normalize_keypoints(np.stack(list(frame_buffer), axis=0).astype(np.float32))
+            seq       = seq_arr[np.newaxis]
             msk       = np.zeros((1, WINDOW_FRAMES), dtype=bool)
             log_probs = sess.run(["log_probs"],
                                   {"keypoints": seq, "padding_mask": msk})[0]

@@ -20,6 +20,7 @@ Usage:
 """
 
 import json
+import os
 import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
@@ -175,86 +176,9 @@ def preprocess_dataset(split: str = "train", vocab_size: int = 100):
 
 
 # ─── Augmentations ────────────────────────────────────────────────────────────
+# All augmentation logic lives in src/augmentations.py — imported here.
 
-def augment_keypoints(kpts: np.ndarray, training: bool = True) -> np.ndarray:
-    """
-    Apply training augmentations to a (T, 126) keypoint array.
-
-    Augmentations:
-        1. Horizontal flip — swap left/right hands (doubles effective dataset)
-        2. Temporal jitter — randomly drop or repeat frames
-        3. Gaussian noise — simulate MediaPipe detection noise
-        4. Wrist-relative normalization — translation + scale invariance
-    """
-    if not training:
-        return normalize_keypoints(kpts)
-
-    # 1. Horizontal flip (50% chance)
-    if np.random.rand() < 0.5:
-        kpts = flip_keypoints(kpts)
-
-    # 2. Temporal jitter (20% of frames affected)
-    kpts = temporal_jitter(kpts, jitter_prob=0.1)
-
-    # 3. Gaussian noise
-    kpts = kpts + np.random.randn(*kpts.shape).astype(np.float32) * 0.01
-
-    # 4. Normalize relative to dominant wrist
-    kpts = normalize_keypoints(kpts)
-
-    return kpts
-
-
-def flip_keypoints(kpts: np.ndarray) -> np.ndarray:
-    """Mirror left/right hands: swap first 63 and last 63 features, flip x."""
-    lh_orig = kpts[:, :63].copy()
-    rh_orig = kpts[:, 63:].copy()
-    flipped = kpts.copy()
-    # new left hand = mirrored original right hand
-    flipped[:, :63] = rh_orig
-    flipped[:, :63][:, 0::3] = 1.0 - rh_orig[:, 0::3]
-    # new right hand = mirrored original left hand
-    flipped[:, 63:] = lh_orig
-    flipped[:, 63:][:, 0::3] = 1.0 - lh_orig[:, 0::3]
-    return flipped
-
-
-def temporal_jitter(kpts: np.ndarray, jitter_prob: float = 0.1) -> np.ndarray:
-    """Randomly drop or repeat individual frames."""
-    T = kpts.shape[0]
-    result = []
-    for t in range(T):
-        r = np.random.rand()
-        if r < jitter_prob / 2 and len(result) > 0:
-            continue  # drop frame
-        elif r < jitter_prob and t > 0:
-            result.append(kpts[t - 1])  # repeat previous
-        result.append(kpts[t])
-    return np.stack(result) if result else kpts
-
-
-def normalize_keypoints(kpts: np.ndarray) -> np.ndarray:
-    """
-    Normalize keypoints relative to the dominant wrist position.
-    Uses right wrist if detected, falls back to left wrist, skips if neither.
-    Makes representation invariant to signer position in frame.
-    """
-    normalized = kpts.copy()
-    rh_wrist = kpts[:, 63:66]  # (T, 3) right wrist
-    lh_wrist = kpts[:, 0:3]    # (T, 3) left wrist
-
-    # Per-frame: pick right wrist if non-zero, else left wrist
-    rh_detected = (rh_wrist != 0).any(axis=1)  # (T,)
-    lh_detected = (lh_wrist != 0).any(axis=1)  # (T,)
-
-    wrist = np.zeros((kpts.shape[0], 3), dtype=np.float32)
-    wrist[rh_detected]                          = rh_wrist[rh_detected]
-    wrist[~rh_detected & lh_detected]           = lh_wrist[~rh_detected & lh_detected]
-
-    for i in range(0, KEYPOINT_DIM, 3):
-        normalized[:, i]     -= wrist[:, 0]  # x
-        normalized[:, i + 1] -= wrist[:, 1]  # y
-    return normalized
+from src.augmentations import augment_keypoints
 
 
 # ─── Dataset ──────────────────────────────────────────────────────────────────

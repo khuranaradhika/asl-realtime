@@ -1,0 +1,1318 @@
+[
+  {
+    "label_idx": 1,
+    "word": "drink",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 2,
+    "word": "computer",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 4,
+    "word": "chair",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 5,
+    "word": "go",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 7,
+    "word": "who",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 8,
+    "word": "candy",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 9,
+    "word": "cousin",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 10,
+    "word": "deaf",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 11,
+    "word": "fine",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 12,
+    "word": "help",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 13,
+    "word": "no",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 14,
+    "word": "thin",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 15,
+    "word": "walk",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 16,
+    "word": "year",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 17,
+    "word": "yes",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 19,
+    "word": "black",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 20,
+    "word": "cool",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 21,
+    "word": "finish",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 22,
+    "word": "hot",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 23,
+    "word": "like",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 24,
+    "word": "many",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 25,
+    "word": "mother",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 26,
+    "word": "now",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 27,
+    "word": "orange",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 29,
+    "word": "thanksgiving",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 30,
+    "word": "what",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 31,
+    "word": "woman",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 33,
+    "word": "blue",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 34,
+    "word": "bowling",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 36,
+    "word": "dog",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 37,
+    "word": "family",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 38,
+    "word": "fish",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 40,
+    "word": "hat",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 42,
+    "word": "kiss",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 43,
+    "word": "language",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 44,
+    "word": "later",
+    "correct": 0,
+    "total": 3,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 45,
+    "word": "man",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 48,
+    "word": "tall",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 49,
+    "word": "white",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 51,
+    "word": "accident",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 52,
+    "word": "apple",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 53,
+    "word": "bird",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 54,
+    "word": "change",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 55,
+    "word": "color",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 57,
+    "word": "cow",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 59,
+    "word": "dark",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 60,
+    "word": "doctor",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 61,
+    "word": "eat",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 62,
+    "word": "enjoy",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 64,
+    "word": "give",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 67,
+    "word": "pink",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 68,
+    "word": "pizza",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 69,
+    "word": "play",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 70,
+    "word": "school",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 72,
+    "word": "short",
+    "correct": 0,
+    "total": 3,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 73,
+    "word": "time",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 74,
+    "word": "want",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 75,
+    "word": "work",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 77,
+    "word": "basketball",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 80,
+    "word": "but",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 81,
+    "word": "cheat",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 83,
+    "word": "cook",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 86,
+    "word": "how",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 87,
+    "word": "jacket",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 88,
+    "word": "letter",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 90,
+    "word": "need",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 91,
+    "word": "paint",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 92,
+    "word": "paper",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 93,
+    "word": "pull",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 94,
+    "word": "purple",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 95,
+    "word": "right",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 96,
+    "word": "same",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 97,
+    "word": "son",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 100,
+    "word": "visit",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 101,
+    "word": "wait",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 102,
+    "word": "water",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 103,
+    "word": "wife",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 104,
+    "word": "yellow",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 105,
+    "word": "backpack",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 106,
+    "word": "bar",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 107,
+    "word": "brother",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 108,
+    "word": "cat",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 109,
+    "word": "check",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 111,
+    "word": "cry",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 113,
+    "word": "door",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 115,
+    "word": "hair",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 118,
+    "word": "inform",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 120,
+    "word": "laugh",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 122,
+    "word": "movie",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 123,
+    "word": "rabbit",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 126,
+    "word": "room",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 127,
+    "word": "run",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 130,
+    "word": "snow",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 135,
+    "word": "why",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 137,
+    "word": "write",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 138,
+    "word": "yesterday",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 139,
+    "word": "again",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 140,
+    "word": "bad",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 144,
+    "word": "buy",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 145,
+    "word": "call",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 146,
+    "word": "coffee",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 147,
+    "word": "cold",
+    "correct": 1,
+    "total": 2,
+    "accuracy": 0.5
+  },
+  {
+    "label_idx": 148,
+    "word": "college",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 150,
+    "word": "cute",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 151,
+    "word": "daughter",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 152,
+    "word": "far",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 154,
+    "word": "friend",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 157,
+    "word": "home",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 160,
+    "word": "leave",
+    "correct": 0,
+    "total": 3,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 162,
+    "word": "lose",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 163,
+    "word": "name",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 164,
+    "word": "old",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 170,
+    "word": "soon",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 171,
+    "word": "stay",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 172,
+    "word": "sunday",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 174,
+    "word": "tired",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 175,
+    "word": "trade",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 177,
+    "word": "window",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 178,
+    "word": "you",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 182,
+    "word": "arrive",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 185,
+    "word": "beard",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 186,
+    "word": "because",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 187,
+    "word": "boy",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 189,
+    "word": "careful",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 191,
+    "word": "chat",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 193,
+    "word": "christmas",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 194,
+    "word": "clock",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 195,
+    "word": "close",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 201,
+    "word": "dress",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 203,
+    "word": "drop",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 205,
+    "word": "feel",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 208,
+    "word": "game",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 209,
+    "word": "girl",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 210,
+    "word": "government",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 211,
+    "word": "hear",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 214,
+    "word": "house",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 215,
+    "word": "husband",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 216,
+    "word": "interest",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 217,
+    "word": "join",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 219,
+    "word": "live",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 220,
+    "word": "make",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 221,
+    "word": "mean",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 222,
+    "word": "more",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 223,
+    "word": "most",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 224,
+    "word": "music",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 225,
+    "word": "new",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 226,
+    "word": "none",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 227,
+    "word": "office",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 229,
+    "word": "pants",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 231,
+    "word": "past",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 233,
+    "word": "plan",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 234,
+    "word": "please",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 235,
+    "word": "practice",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 237,
+    "word": "restaurant",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 239,
+    "word": "russia",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 243,
+    "word": "since",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 244,
+    "word": "small",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 245,
+    "word": "some",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 246,
+    "word": "south",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 248,
+    "word": "teach",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 256,
+    "word": "always",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 257,
+    "word": "animal",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 258,
+    "word": "argue",
+    "correct": 1,
+    "total": 1,
+    "accuracy": 1.0
+  },
+  {
+    "label_idx": 259,
+    "word": "baby",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 261,
+    "word": "bake",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 262,
+    "word": "bath",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 266,
+    "word": "cereal",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 267,
+    "word": "champion",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 268,
+    "word": "cheese",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 269,
+    "word": "cough",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 271,
+    "word": "delay",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 272,
+    "word": "delicious",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 274,
+    "word": "divorce",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 276,
+    "word": "east",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 277,
+    "word": "easy",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 279,
+    "word": "environment",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 282,
+    "word": "flower",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 283,
+    "word": "friendly",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 284,
+    "word": "glasses",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 285,
+    "word": "halloween",
+    "correct": 0,
+    "total": 2,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 286,
+    "word": "hard",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 287,
+    "word": "heart",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 291,
+    "word": "improve",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 292,
+    "word": "internet",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 295,
+    "word": "law",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 297,
+    "word": "meat",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 298,
+    "word": "milk",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  },
+  {
+    "label_idx": 299,
+    "word": "money",
+    "correct": 0,
+    "total": 1,
+    "accuracy": 0.0
+  }
+]

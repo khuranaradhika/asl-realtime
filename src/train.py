@@ -5,12 +5,19 @@ Training loop for SignTransformer with CTC loss.
 Includes checkpointing, learning rate scheduling, and logging.
 
 Usage:
-    python src/train.py --vocab 2000 --epochs 50 --d_model 128 --n_layers 3
-    python src/train.py --vocab 2000 --epochs 100 --teacher
+    # BiLSTM baseline
+    python src/train.py --model lstm --vocab 300 --epochs 50 --combined
+
+    # Transformer student (~672K params)
+    python src/train.py --model transformer --vocab 300 --epochs 50 --combined
+
+    # Transformer teacher (GPU recommended)
+    python src/train.py --model transformer --vocab 300 --epochs 100 --teacher --combined
 """
 
 import json
 import argparse
+import platform
 import time
 from pathlib import Path
 
@@ -22,11 +29,12 @@ from tqdm import tqdm
 
 from src.config import CHECKPOINT_DIR
 from src.dataloader import get_dataloader
-from src.model import build_student_model, build_teacher_model, make_padding_mask
-from src.evaluate import evaluate
+from src.model import (build_student_model, build_student_classifier,
+                       build_teacher_model, build_lstm_baseline, build_cnn_baseline,
+                       make_padding_mask)
 
 
-def train_one_epoch(model, loader, optimizer, ctc_loss, device, vocab_size):
+def train_one_epoch(model, loader, optimizer, criterion, device, vocab_size, loss_type="ce"):
     model.train()
     total_loss = 0.0
     n_batches  = 0
@@ -35,12 +43,17 @@ def train_one_epoch(model, loader, optimizer, ctc_loss, device, vocab_size):
         kpts    = batch["keypoints"].to(device)
         labels  = batch["label"].to(device).squeeze(1)
         in_lens = batch["input_length"].to(device)
-        lb_lens = batch["label_length"].to(device)
 
-        mask     = make_padding_mask(in_lens, max_len=kpts.size(1)).to(device)
-        log_prob = model(kpts, src_key_padding_mask=mask)  # (T, B, C)
+        mask   = make_padding_mask(in_lens, max_len=kpts.size(1)).to(device)
+        output = model(kpts, src_key_padding_mask=mask)
 
-        loss = ctc_loss(log_prob, labels, in_lens, lb_lens)
+        if loss_type == "ce":
+            # output: (B, C) — direct cross-entropy
+            loss = criterion(output, labels)
+        else:
+            # output: (T, B, C+1) — CTC
+            lb_lens = batch["label_length"].to(device)
+            loss    = criterion(output, labels, in_lens, lb_lens)
 
         optimizer.zero_grad()
         loss.backward()
@@ -53,76 +66,7 @@ def train_one_epoch(model, loader, optimizer, ctc_loss, device, vocab_size):
     return total_loss / max(n_batches, 1)
 
 
-@torch.no_grad()
-def evaluate(model, loader, device, vocab_size, per_class=False):
-    model.eval()
-    correct_top1 = 0
-    correct_top5 = 0
-    total        = 0
-
-    # per-class tracking: {label_idx: [correct, total]}
-    class_stats = {}
-
-    for batch in tqdm(loader, desc="Evaluating", leave=False):
-        kpts    = batch["keypoints"].to(device)
-        labels  = batch["label"].to(device).squeeze(1)
-        in_lens = batch["input_length"].to(device)
-
-        mask     = make_padding_mask(in_lens, max_len=kpts.size(1)).to(device)
-        log_prob = model(kpts, src_key_padding_mask=mask)  # (T, B, C)
-
-        # Use mean log_prob over non-padded frames for both Top-1 and Top-5.
-        # More robust than CTC greedy decode for isolated word classification.
-        for i in range(kpts.size(0)):
-            T_i      = in_lens[i].item()
-            avg_prob = log_prob[:T_i, i, :vocab_size].mean(dim=0)  # (C,) exclude blank
-
-            pred_top1 = avg_prob.argmax().item()
-            label     = labels[i].item()
-            hit       = int(pred_top1 == label)
-
-            correct_top1 += hit
-            if label not in class_stats:
-                class_stats[label] = [0, 0]
-            class_stats[label][0] += hit
-            class_stats[label][1] += 1
-
-            top5 = avg_prob.topk(5).indices.tolist()
-            if label in top5:
-                correct_top5 += 1
-
-            total += 1
-
-    top1 = correct_top1 / max(total, 1)
-    top5 = correct_top5 / max(total, 1)
-
-    if per_class:
-        return top1, top5, class_stats
-    return top1, top5
-
-
-def greedy_decode(preds_seq: torch.Tensor, blank: int):
-    """
-    CTC greedy decoding: remove blanks and repeated tokens.
-
-    Args:
-        preds_seq: (B, T) argmax predictions
-        blank:     blank token index
-
-    Returns:
-        list of lists, each containing decoded token indices for one sample
-    """
-    results = []
-    for b in range(preds_seq.size(0)):
-        seq      = preds_seq[b].tolist()
-        decoded  = []
-        prev     = None
-        for token in seq:
-            if token != blank and token != prev:
-                decoded.append(token)
-            prev = token
-        results.append(decoded)
-    return results
+from src.evaluate import evaluate
 
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
@@ -137,30 +81,63 @@ def main(args):
                                   augment=not args.no_augment, combined=args.combined)
     val_loader   = get_dataloader("val",   vocab_size=args.vocab,
                                   batch_size=args.batch_size, num_workers=args.workers,
-                                  combined=args.combined)
+                                  combined=False)  # val always uses WLASL-only manifest
 
-    if args.teacher:
+    aug_tag      = "_noaug" if args.no_augment else ""
+    combined_tag = "_combined" if args.combined else ""
+
+    loss_tag = "_ctc" if args.loss == "ctc" else ""
+
+    if args.model == "cnn":
+        model    = build_cnn_baseline(n_classes=args.vocab)
+        run_name = f"cnn_d128_l4_v{args.vocab}{aug_tag}{loss_tag}{combined_tag}"
+    elif args.model == "lstm":
+        model    = build_lstm_baseline(n_classes=args.vocab)
+        run_name = f"lstm_h128_l2_v{args.vocab}{aug_tag}{loss_tag}{combined_tag}"
+    elif args.teacher:
         model    = build_teacher_model(n_classes=args.vocab)
-        run_name = f"teacher_v{args.vocab}"
+        run_name = f"transformer_teacher_v{args.vocab}{aug_tag}{loss_tag}{combined_tag}"
+    elif args.loss == "ce":
+        model    = build_student_classifier(n_classes=args.vocab, input_dim=126,
+                                            d_model=args.d_model, n_layers=args.n_layers,
+                                            dropout=args.dropout)
+        run_name = f"transformer_d{args.d_model}_l{args.n_layers}_v{args.vocab}{aug_tag}{combined_tag}"
     else:
         model    = build_student_model(n_classes=args.vocab)
-        run_name = f"student_d{args.d_model}_l{args.n_layers}_v{args.vocab}"
+        run_name = f"transformer_d{args.d_model}_l{args.n_layers}_v{args.vocab}{aug_tag}_ctc{combined_tag}"
 
     model = model.to(device)
     print(f"Model parameters: {model.count_parameters():,}")
 
-    ctc_loss  = nn.CTCLoss(blank=args.vocab, reduction="mean", zero_infinity=True)
+    if args.loss == "ce":
+        criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
+    else:
+        criterion = nn.CTCLoss(blank=args.vocab, reduction="mean", zero_infinity=True)
+
     optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     scheduler = CosineAnnealingLR(optimizer, T_max=args.epochs, eta_min=1e-6)
 
     best_top1 = 0.0
     history   = []
 
+    # Protect against overwriting a better existing checkpoint.
+    # If a checkpoint already exists for this run_name, initialize best_top1
+    # from it so a fresh run only saves if it genuinely beats the prior best.
+    ckpt_path = CHECKPOINT_DIR / f"{run_name}_best.pt"
+    if ckpt_path.exists():
+        try:
+            existing = torch.load(ckpt_path, map_location="cpu", weights_only=False)
+            best_top1 = existing.get("top1", 0.0)
+            print(f"Existing checkpoint found: Top-1 = {best_top1:.3f} "
+                  f"(epoch {existing.get('epoch', '?')}) — will only overwrite if beaten.")
+        except Exception as e:
+            print(f"Could not read existing checkpoint: {e}")
+
     for epoch in range(1, args.epochs + 1):
         t0         = time.time()
         train_loss = train_one_epoch(model, train_loader, optimizer,
-                                     ctc_loss, device, args.vocab)
-        top1, top5 = evaluate(model, val_loader, device, args.vocab)
+                                     criterion, device, args.vocab, loss_type=args.loss)
+        top1, top5 = evaluate(model, val_loader, device, args.vocab, loss_type=args.loss)
         scheduler.step()
 
         elapsed = time.time() - t0
@@ -174,7 +151,6 @@ def main(args):
 
         if top1 > best_top1:
             best_top1 = top1
-            ckpt_path = CHECKPOINT_DIR / f"{run_name}_best.pt"
             torch.save({
                 "epoch":       epoch,
                 "model_state": model.state_dict(),
@@ -193,7 +169,8 @@ def main(args):
 
     # Per-class accuracy breakdown (final epoch)
     print("\n=== Per-class accuracy breakdown ===")
-    _, _, class_stats = evaluate(model, val_loader, device, args.vocab, per_class=True)
+    _, _, class_stats = evaluate(model, val_loader, device, args.vocab,
+                                  per_class=True, loss_type=args.loss)
 
     vocab_path = Path("data/processed/vocab.json")
     idx2word   = {}
@@ -232,18 +209,27 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train SignTransformer on WLASL")
-    parser.add_argument("--vocab",      type=int,   default=2000)
+    default_workers = 0 if platform.system() == "Darwin" else 4
+    parser.add_argument("--vocab",      type=int,   default=300)
     parser.add_argument("--epochs",     type=int,   default=50)
     parser.add_argument("--batch_size", type=int,   default=32)
     parser.add_argument("--lr",         type=float, default=3e-4)
     parser.add_argument("--d_model",    type=int,   default=128)
     parser.add_argument("--n_layers",   type=int,   default=3)
-    parser.add_argument("--workers",    type=int,   default=4)
+    parser.add_argument("--workers",    type=int,   default=default_workers)
+    parser.add_argument("--model",      type=str,   default="transformer",
+                        choices=["transformer", "lstm", "cnn"],
+                        help="Model architecture: transformer (default), lstm, or cnn (baselines)")
     parser.add_argument("--teacher",    action="store_true",
-                        help="Train the larger teacher model instead of student")
+                        help="Use larger teacher transformer (ignored when --model lstm)")
+    parser.add_argument("--loss",       type=str, default="ce",
+                        choices=["ce", "ctc"],
+                        help="Loss function: ce (cross-entropy, default) or ctc (for future continuous signing)")
+    parser.add_argument("--dropout",    type=float, default=0.1,
+                        help="Dropout rate (default 0.1; try 0.3 for stronger regularization)")
     parser.add_argument("--no-augment", action="store_true",
                         help="Disable training augmentations (use for EXP-001 baseline)")
     parser.add_argument("--combined",   action="store_true",
-                        help="Use combined WLASL+MS-ASL manifest for training")
+                        help="Use combined WLASL+ASL Citizen manifest for training")
     args = parser.parse_args()
     main(args)
