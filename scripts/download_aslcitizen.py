@@ -174,11 +174,11 @@ def main(vocab_size: int):
     with open(manifest_path, "w") as f:
         json.dump(manifest, f, indent=2)
 
-    print(f"\n=== 完成 ===")
-    print(f"保存了 {len(manifest)} 个样本 → {manifest_path}")
-    print(f"跳过（不在词表）: {skipped_vocab}")
-    print(f"跳过（下载失败）: {skipped_dl}")
-    print(f"跳过（转换失败）: {skipped_conv}")
+    print(f"\n=== Done ===")
+    print(f"Saved {len(manifest)} samples → {manifest_path}")
+    print(f"Skipped (not in vocab): {skipped_vocab}")
+    print(f"Skipped (download failed): {skipped_dl}")
+    print(f"Skipped (conversion failed): {skipped_conv}")
 
     # Merge with WLASL manifest
     wlasl_path = DATA_PROC / "train_manifest.json"
@@ -191,7 +191,7 @@ def main(vocab_size: int):
         combined_path = DATA_PROC / "combined_train_manifest.json"
         with open(combined_path, "w") as f:
             json.dump(combined, f, indent=2)
-        print(f"合并后 train manifest: {len(combined)} 个样本 → {combined_path}")
+        print(f"Combined train manifest: {len(combined)} samples → {combined_path}")
 
 
 if __name__ == "__main__":
