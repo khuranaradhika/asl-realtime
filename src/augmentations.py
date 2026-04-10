@@ -21,7 +21,8 @@ def augment_keypoints(kpts: np.ndarray, training: bool = True) -> np.ndarray:
         1. Horizontal flip    — swap left/right hands (doubles effective dataset)
         2. Speed perturbation — resample sequence at 0.8x–1.2x speed
         3. Temporal jitter    — randomly drop or repeat individual frames
-        4. Gaussian noise     — simulate MediaPipe detection noise
+        4. Scale augmentation — randomly scale keypoints 0.85x–1.15x (simulates hand size variation)
+        5. Gaussian noise     — simulate MediaPipe detection noise
 
     Always applied (train + val/test):
         5. Wrist-relative normalization — translation invariance
@@ -35,6 +36,7 @@ def augment_keypoints(kpts: np.ndarray, training: bool = True) -> np.ndarray:
 
     kpts = speed_perturb(kpts, min_rate=0.8, max_rate=1.2)
     kpts = temporal_jitter(kpts, jitter_prob=0.1)
+    kpts = scale_augment(kpts, min_scale=0.85, max_scale=1.15)
     kpts = kpts + np.random.randn(*kpts.shape).astype(np.float32) * 0.01
     kpts = normalize_keypoints(kpts)
 
@@ -110,6 +112,16 @@ def temporal_jitter(kpts: np.ndarray, jitter_prob: float = 0.1) -> np.ndarray:
             result.append(kpts[t - 1])
         result.append(kpts[t])
     return np.stack(result) if result else kpts
+
+
+def scale_augment(kpts: np.ndarray, min_scale: float = 0.85, max_scale: float = 1.15) -> np.ndarray:
+    """
+    Randomly scale all keypoint coordinates by a uniform factor.
+    Simulates signers with different hand sizes or at different distances from the camera.
+    Applied before normalize_keypoints so the scale is absorbed by normalization.
+    """
+    scale = np.random.uniform(min_scale, max_scale)
+    return (kpts * scale).astype(np.float32)
 
 
 def normalize_keypoints(kpts: np.ndarray) -> np.ndarray:

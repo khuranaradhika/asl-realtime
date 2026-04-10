@@ -235,6 +235,89 @@ A single HTML file that runs the entire browser side of the demo. No build step,
 
 ---
 
+## Change 7: Checkpoint Overwrite Protection
+
+**File:** `src/train.py`
+
+A bug caused the best checkpoint to be overwritten whenever a new training run started. The issue: `best_top1` initialized to `0.0` each run, so epoch 1 (e.g. 0.87%) would immediately beat it and write over a previously saved 11.4% checkpoint.
+
+**Fix:** At the start of training, if a checkpoint already exists for the current `run_name`, read its `top1` and initialize `best_top1` from it. A new run only saves if it genuinely beats the prior best.
+
+```python
+ckpt_path = CHECKPOINT_DIR / f"{run_name}_best.pt"
+if ckpt_path.exists():
+    existing  = torch.load(ckpt_path, map_location="cpu", weights_only=False)
+    best_top1 = existing.get("top1", 0.0)
+    print(f"Existing checkpoint found: Top-1 = {best_top1:.3f} — will only overwrite if beaten.")
+```
+
+---
+
+## Change 8: `--dropout` and `--d_model`/`--n_layers` Flags
+
+**File:** `src/train.py`, `src/model.py`
+
+New CLI flags for hyperparameter tuning without editing code:
+
+```bash
+--dropout 0.3      # default 0.1 — try 0.3 for stronger regularization on small datasets
+--d_model 256      # default 128 — larger model dimension
+--n_layers 4       # default 3 — more transformer layers
+```
+
+Different `d_model`/`n_layers` values produce unique checkpoint names (e.g. `transformer_d256_l4_v300_combined_best.pt`) so they never collide with the default run.
+
+`build_student_classifier()` in `src/model.py` updated to accept these params and auto-set `nhead` (4 for d≤128, 8 for d≥256) and `dim_feedforward = d_model * 2`.
+
+To try the teacher model (18M params, much larger):
+```bash
+python3 -m src.train --model transformer --teacher --vocab 300 --epochs 150 --combined
+```
+
+---
+
+## Change 9: WeightedRandomSampler
+
+**File:** `src/dataloader.py`
+
+Previously, training batches were random — frequent classes appeared more often than rare ones. With a long-tail class distribution this means the model sees common classes many times per epoch and rare classes almost never.
+
+`WeightedRandomSampler` fixes this by giving each sample a weight inversely proportional to its class frequency. Every class gets approximately equal representation in each batch regardless of how many samples it has.
+
+```python
+labels       = [s["label_idx"] for s in dataset.samples]
+class_counts = Counter(labels)
+weights      = [1.0 / class_counts[l] for l in labels]
+sampler      = WeightedRandomSampler(weights, num_samples=len(weights), replacement=True)
+```
+
+This replaces `shuffle=True` in the training DataLoader — `shuffle` and `sampler` are mutually exclusive in PyTorch. Val/test loaders are unchanged.
+
+No CLI changes needed. Takes effect automatically on the next training run.
+
+---
+
+## Change 10: Scale Augmentation
+
+**File:** `src/augmentations.py`
+
+A new augmentation — `scale_augment()` — randomly multiplies all keypoint coordinates by a uniform factor between 0.85 and 1.15. This simulates signers with different hand sizes and at different distances from the camera.
+
+It runs *before* `normalize_keypoints()`, so the scale factor is absorbed by the hand-span normalization step and doesn't cause the model to see unnormalized inputs.
+
+```python
+def scale_augment(kpts, min_scale=0.85, max_scale=1.15):
+    scale = np.random.uniform(min_scale, max_scale)
+    return (kpts * scale).astype(np.float32)
+```
+
+Added to the augmentation pipeline between temporal jitter and Gaussian noise:
+```
+flip → speed_perturb → temporal_jitter → scale_augment → gaussian_noise → normalize
+```
+
+---
+
 ## Minor Fixes (Gyula's Files — Bug Only, No Logic Changes)
 
 These are small fixes in files outside Radhika's scope. They fix bugs rather than add features.
@@ -333,10 +416,11 @@ Estimates are based on dataset size (~9 samples/class average) and comparable pu
 
 | File | Owner | Status | What changed |
 |------|-------|--------|-------------|
-| `src/model.py` | Radhika | Modified | Added `SignClassifier` + `build_student_classifier()` |
-| `src/train.py` | Radhika | Modified | `--loss ce/ctc` flag, CE training loop, label smoothing, per-class fix |
+| `src/model.py` | Radhika | Modified | Added `SignClassifier` + `build_student_classifier()` with `d_model`/`n_layers`/`dropout` params |
+| `src/train.py` | Radhika | Modified | CE loss, label smoothing, per-class breakdown, checkpoint overwrite protection, `--dropout`/`--d_model`/`--n_layers` flags, MPS device support |
 | `src/evaluate.py` | Radhika | Modified | `loss_type` param, CE eval path, `per_class` support |
-| `src/augmentations.py` | Radhika | Modified | Holistic flip/normalize, scale normalization fix |
+| `src/augmentations.py` | Radhika | Modified | Holistic flip/normalize, scale normalization, `scale_augment()` |
+| `src/dataloader.py` | Radhika | Modified | `WeightedRandomSampler` for balanced class sampling |
 | `src/config.py` | Radhika | Modified | `HOLISTIC_DIM`, `POSE_FLIP_PAIRS` |
 | `src/server.py` | Radhika | **New** | FastAPI WebSocket inference server |
 | `frontend/index.html` | Radhika | **New** | Browser demo with MediaPipe.js |

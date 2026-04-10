@@ -20,10 +20,12 @@ Usage:
 """
 
 import json
+import argparse
 import os
 import numpy as np
 import torch
-from torch.utils.data import Dataset, DataLoader
+from collections import Counter
+from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
 from pathlib import Path
 from tqdm import tqdm
 
@@ -272,13 +274,25 @@ def get_dataloader(split: str = "train", vocab_size: int = 100,
         augment=(split == "train") and augment,
         combined=combined)
 
+    if split == "train":
+        labels = [s["label_idx"] for s in dataset.samples]
+        class_counts = Counter(labels)
+        weights = [1.0 / class_counts[l] for l in labels]
+        sampler = WeightedRandomSampler(weights, num_samples=len(weights), replacement=True)
+        return DataLoader(
+            dataset,
+            batch_size=batch_size,
+            sampler=sampler,
+            num_workers=num_workers,
+            pin_memory=True,
+            drop_last=True)
+
     return DataLoader(
         dataset,
         batch_size=batch_size,
-        shuffle=(split == "train"),
+        shuffle=False,
         num_workers=num_workers,
-        pin_memory=True,
-        drop_last=(split == "train"))
+        pin_memory=True)
 
 
 # ─── MS-ASL extraction ────────────────────────────────────────────────────────
