@@ -44,3 +44,7 @@ Thumbs.db
 # Experiments
 wandb/
 runs/
+data/processed/aslense/
+data/processed/train/
+data/processed/val/
+data/processed/test/
