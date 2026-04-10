@@ -56,3 +56,24 @@ Train samples: 51,106
 Avg samples/class: 27.0
 Classes with 10+ samples: 1829
 Classes with 30+ samples: 229
+
+
+Full Count:
+WLASL:       3,239
+ASL Citizen: 1,542
+Aslense:     48,797
+Train total: 53,578
+Val total:   6,194
+Vocab:       2591
+
+
+Count Optimized for best samples/class
+Vocab: 1896
+Train: 52,998
+Val:   5,567
+WLASL:       2,659
+ASL Citizen: 1,542
+Aslense:     48,797
+Avg samples/class: 28.0
+
+
