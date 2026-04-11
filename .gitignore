@@ -10,8 +10,6 @@ data/raw/msasl/videos/
 # MediaPipe model file
 data/*.task
 
-# Model checkpoints
-models/checkpoints/
 
 # Processed keypoints — large binary files, regenerate locally
 data/processed/train/
