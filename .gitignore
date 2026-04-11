@@ -64,3 +64,4 @@ data/processed/aslense/
 data/raw/wlasl/videos/
 data/raw/aslense/
 data/raw/msasl/videos/
+data/processed/*.zip
