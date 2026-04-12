@@ -127,13 +127,15 @@ class CNNBaseline(nn.Module):
     Architecture:
         Linear projection (126 → d_model)
         → 4 × Conv1d residual blocks (kernel=3, causal padding)
-        → Linear classifier (d_model → n_classes + 1)
+        → Linear classifier
 
     Captures local motion patterns (e.g. handshape transitions over 3–7 frames)
     but has no mechanism for long-range temporal dependencies. Faster than both
     LSTM and Transformer on CPU — serves as the lower bound in the comparison.
 
-    Output is shaped (T, B, C) for PyTorch's nn.CTCLoss.
+    Supports both CTC and CE loss modes:
+    - CTC mode: outputs (T, B, n_classes + 1) for CTCLoss
+    - CE mode: outputs (B, n_classes) for CrossEntropyLoss
     """
 
     def __init__(
@@ -143,9 +145,11 @@ class CNNBaseline(nn.Module):
         n_classes: int = 300,
         dropout:   float = 0.1,
         input_dim: int = 126,
+        use_ctc:   bool = True,
     ):
         super().__init__()
-        self.n_classes  = n_classes
+        self.n_classes = n_classes
+        self.use_ctc = use_ctc
         self.input_proj = nn.Linear(input_dim, d_model)
 
         self.blocks = nn.ModuleList([
@@ -159,32 +163,39 @@ class CNNBaseline(nn.Module):
             for _ in range(n_layers)
         ])
         self.norms      = nn.ModuleList([nn.LayerNorm(d_model) for _ in range(n_layers)])
-        self.classifier = nn.Linear(d_model, n_classes + 1)
+        out_features = n_classes + 1 if use_ctc else n_classes
+        self.classifier = nn.Linear(d_model, out_features)
 
     def forward(
         self,
         x: torch.Tensor,
-        src_key_padding_mask: torch.Tensor = None,  # unused, keeps same interface
+        src_key_padding_mask: torch.Tensor = None,
     ) -> torch.Tensor:
         """
         Args:
             x: (B, T, 126) keypoint sequences
         Returns:
-            log_probs: (T, B, n_classes + 1)
+            If use_ctc=True: log_probs (T, B, n_classes + 1) for CTCLoss
+            If use_ctc=False: logits (B, n_classes) for CrossEntropyLoss
         """
-        x = self.input_proj(x)          # (B, T, d_model)
-        x = x.permute(0, 2, 1)         # (B, d_model, T) for Conv1d
+        x = self.input_proj(x)
+        x = x.permute(0, 2, 1)
 
         for block, norm in zip(self.blocks, self.norms):
             residual = x
             x = block(x)
-            x = x + residual            # residual connection
-            x = norm(x.permute(0, 2, 1)).permute(0, 2, 1)  # LayerNorm over d_model
+            x = x + residual
+            x = norm(x.permute(0, 2, 1)).permute(0, 2, 1)
 
-        x = x.permute(0, 2, 1)         # (B, T, d_model)
-        x = self.classifier(x)         # (B, T, C)
-        x = x.permute(1, 0, 2)         # (T, B, C) for CTCLoss
-        return F.log_softmax(x, dim=-1)
+        x = x.permute(0, 2, 1)
+        x = self.classifier(x)
+
+        if self.use_ctc:
+            x = x.permute(1, 0, 2)
+            return F.log_softmax(x, dim=-1)
+        else:
+            x = x.mean(dim=1)
+            return x
 
     def count_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
@@ -354,10 +365,11 @@ def build_teacher_model(n_classes: int = 300) -> SignTransformer:
         dim_feedforward=1024, n_classes=n_classes, dropout=0.1)
 
 
-def build_cnn_baseline(n_classes: int = 300) -> CNNBaseline:
+def build_cnn_baseline(n_classes: int = 300, loss: str = "ce") -> CNNBaseline:
     """1D CNN baseline — local temporal patterns only, fastest CPU inference."""
+    use_ctc = (loss == "ctc")
     return CNNBaseline(
-        d_model=128, n_layers=4, n_classes=n_classes, dropout=0.1)
+        d_model=128, n_layers=4, n_classes=n_classes, dropout=0.1, use_ctc=use_ctc)
 
 
 def build_student_classifier(n_classes: int = 300, input_dim: int = 126,
