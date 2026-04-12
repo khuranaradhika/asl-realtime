@@ -92,7 +92,7 @@ def main(args):
         model    = build_cnn_baseline(n_classes=args.vocab)
         run_name = f"cnn_d128_l4_v{args.vocab}{aug_tag}{loss_tag}{combined_tag}"
     elif args.model == "lstm":
-        model    = build_lstm_baseline(n_classes=args.vocab)
+        model = build_lstm_baseline(n_classes=args.vocab, loss=args.loss)
         run_name = f"lstm_h128_l2_v{args.vocab}{aug_tag}{loss_tag}{combined_tag}"
     elif args.teacher:
         model    = build_teacher_model(n_classes=args.vocab)
