@@ -89,7 +89,7 @@ def main(args):
     loss_tag = "_ctc" if args.loss == "ctc" else ""
 
     if args.model == "cnn":
-        model    = build_cnn_baseline(n_classes=args.vocab)
+        model    = build_cnn_baseline(n_classes=args.vocab, loss=args.loss)
         run_name = f"cnn_d128_l4_v{args.vocab}{aug_tag}{loss_tag}{combined_tag}"
     elif args.model == "lstm":
         model = build_lstm_baseline(n_classes=args.vocab, loss=args.loss)
