@@ -197,10 +197,11 @@ class BiLSTMBaseline(nn.Module):
     Architecture:
         2 × stacked BiLSTM (hidden=128, bidirectional → 256-dim output)
         → Dropout
-        → Linear classifier (256 → n_classes + 1)
+        → Linear classifier
 
-    Output is shaped (T, B, C) for PyTorch's nn.CTCLoss, identical interface
-    to SignTransformer so train.py works with both without changes.
+    Supports both CTC and CE loss modes:
+    - CTC mode: outputs (T, B, n_classes + 1) for CTCLoss
+    - CE mode: outputs (B, n_classes) for CrossEntropyLoss
 
     Args:
         hidden_size: LSTM hidden size per direction (default 128 → 256 bidirectional)
@@ -208,6 +209,7 @@ class BiLSTMBaseline(nn.Module):
         n_classes:   vocabulary size
         dropout:     dropout between LSTM layers and before classifier
         input_dim:   keypoint feature dimension (126)
+        use_ctc:     if True, use CTC loss mode; if False, use CE loss mode
     """
 
     def __init__(
@@ -217,9 +219,11 @@ class BiLSTMBaseline(nn.Module):
         n_classes:   int = 300,
         dropout:     float = 0.3,
         input_dim:   int = 126,
+        use_ctc:     bool = True,
     ):
         super().__init__()
         self.n_classes = n_classes
+        self.use_ctc = use_ctc
 
         self.lstm = nn.LSTM(
             input_size=input_dim,
@@ -230,12 +234,13 @@ class BiLSTMBaseline(nn.Module):
             dropout=dropout if n_layers > 1 else 0.0,
         )
         self.dropout    = nn.Dropout(dropout)
-        self.classifier = nn.Linear(hidden_size * 2, n_classes + 1)  # *2 for bidirectional
+        out_features = n_classes + 1 if use_ctc else n_classes
+        self.classifier = nn.Linear(hidden_size * 2, out_features)
 
     def forward(
         self,
         x: torch.Tensor,
-        src_key_padding_mask: torch.Tensor = None,  # accepted but unused — keeps same interface as SignTransformer
+        src_key_padding_mask: torch.Tensor = None,
     ) -> torch.Tensor:
         """
         Args:
@@ -243,13 +248,19 @@ class BiLSTMBaseline(nn.Module):
             src_key_padding_mask: ignored (LSTM handles variable lengths implicitly)
 
         Returns:
-            log_probs: (T, B, n_classes + 1) — log-softmax for CTCLoss
+            If use_ctc=True: log_probs (T, B, n_classes + 1) for CTCLoss
+            If use_ctc=False: logits (B, n_classes) for CrossEntropyLoss
         """
-        out, _ = self.lstm(x)                   # (B, T, hidden*2)
-        out     = self.dropout(out)
-        out     = self.classifier(out)           # (B, T, C)
-        out     = out.permute(1, 0, 2)           # (T, B, C) for CTCLoss
-        return F.log_softmax(out, dim=-1)
+        out, _ = self.lstm(x)
+        out = self.dropout(out)
+        out = self.classifier(out)
+
+        if self.use_ctc:
+            out = out.permute(1, 0, 2)
+            return F.log_softmax(out, dim=-1)
+        else:
+            out = out.mean(dim=1)
+            return out
 
     def count_parameters(self) -> int:
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
@@ -361,10 +372,11 @@ def build_student_classifier(n_classes: int = 300, input_dim: int = 126,
         dropout=dropout, input_dim=input_dim)
 
 
-def build_lstm_baseline(n_classes: int = 300) -> BiLSTMBaseline:
+def build_lstm_baseline(n_classes: int = 300, loss: str = "ce") -> BiLSTMBaseline:
     """BiLSTM baseline — sequential hidden state, middle ground."""
+    use_ctc = (loss == "ctc")
     return BiLSTMBaseline(
-        hidden_size=128, n_layers=2, n_classes=n_classes, dropout=0.3)
+        hidden_size=128, n_layers=2, n_classes=n_classes, dropout=0.3, use_ctc=use_ctc)
 
 
 def make_padding_mask(input_lengths: torch.Tensor, max_len: int) -> torch.Tensor:

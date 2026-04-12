@@ -63,3 +63,8 @@ data/raw/wlasl/videos/
 data/raw/aslense/
 data/raw/msasl/videos/
 data/processed/*.zip
+
+
+zips/*
+data/processed/wlasl/*
+.DS_Store
