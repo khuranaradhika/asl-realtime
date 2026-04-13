@@ -721,3 +721,178 @@ Bottom-10 classes:
 
 Classes with 0% accuracy: 501/1896
 Per-class results saved → results/metrics/transformer_d256_l4_v1896_combined_per_class.json
+
+/Users/khuranaradhika/asl-realtime/src/model.py:294: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder    = nn.TransformerEncoder(enc_layer, num_layers=n_layers)
+Teacher type: student classifier (d=256, l=4)
+Teacher Top-1: 0.440
+Teacher params: 0
+
+Student params: 658,280
+Distillation: alpha=0.5, tau=4.0
+[train/combined] 52998 samples loaded
+[val/wlasl] 5567 samples loaded
+
+Saving to: models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Starting distillation for 100 epochs...
+
+Distilling:   0%|                                                                              | 0/1656 [00:00<?, ?it/s]/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/torch/utils/data/dataloader.py:775: UserWarning: 'pin_memory' argument is set as true but not supported on MPS now, device pinned memory won't be used.
+  super().__init__(loader)
+Epoch 001/100 | Loss: 3.9277 | Top-1: 0.038 | Top-5: 0.119 | LR: 3.00e-04 | 111.5s                                      
+  ✓ New best: 0.038 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 002/100 | Loss: 3.2689 | Top-1: 0.084 | Top-5: 0.239 | LR: 3.00e-04 | 102.7s                                      
+  ✓ New best: 0.084 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 003/100 | Loss: 2.8592 | Top-1: 0.146 | Top-5: 0.329 | LR: 2.99e-04 | 104.0s                                      
+  ✓ New best: 0.146 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 004/100 | Loss: 2.5865 | Top-1: 0.162 | Top-5: 0.368 | LR: 2.99e-04 | 108.3s                                      
+  ✓ New best: 0.162 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 005/100 | Loss: 2.3889 | Top-1: 0.208 | Top-5: 0.422 | LR: 2.98e-04 | 118.6s                                      
+  ✓ New best: 0.208 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 006/100 | Loss: 2.2443 | Top-1: 0.215 | Top-5: 0.449 | LR: 2.97e-04 | 116.5s                                      
+  ✓ New best: 0.215 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 007/100 | Loss: 2.1329 | Top-1: 0.261 | Top-5: 0.503 | LR: 2.96e-04 | 104.2s                                      
+  ✓ New best: 0.261 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 008/100 | Loss: 2.0506 | Top-1: 0.260 | Top-5: 0.491 | LR: 2.95e-04 | 114.1s                                      
+Epoch 009/100 | Loss: 1.9820 | Top-1: 0.260 | Top-5: 0.493 | LR: 2.94e-04 | 119.0s                                      
+Epoch 010/100 | Loss: 1.9239 | Top-1: 0.298 | Top-5: 0.541 | LR: 2.93e-04 | 111.4s                                      
+  ✓ New best: 0.298 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 011/100 | Loss: 1.8632 | Top-1: 0.294 | Top-5: 0.526 | LR: 2.91e-04 | 105.4s                                      
+Epoch 012/100 | Loss: 1.8189 | Top-1: 0.317 | Top-5: 0.548 | LR: 2.90e-04 | 118.3s                                      
+  ✓ New best: 0.317 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 013/100 | Loss: 1.7799 | Top-1: 0.329 | Top-5: 0.579 | LR: 2.88e-04 | 116.0s                                      
+  ✓ New best: 0.329 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 014/100 | Loss: 1.7406 | Top-1: 0.360 | Top-5: 0.620 | LR: 2.86e-04 | 117.9s                                      
+  ✓ New best: 0.360 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 015/100 | Loss: 1.7086 | Top-1: 0.341 | Top-5: 0.591 | LR: 2.84e-04 | 137.1s                                      
+Epoch 016/100 | Loss: 1.6908 | Top-1: 0.358 | Top-5: 0.620 | LR: 2.82e-04 | 142.6s                                      
+Epoch 017/100 | Loss: 1.6628 | Top-1: 0.348 | Top-5: 0.592 | LR: 2.79e-04 | 134.8s                                      
+Epoch 018/100 | Loss: 1.6422 | Top-1: 0.352 | Top-5: 0.597 | LR: 2.77e-04 | 149.0s                                      
+Epoch 019/100 | Loss: 1.6229 | Top-1: 0.392 | Top-5: 0.648 | LR: 2.74e-04 | 124.7s                                      
+  ✓ New best: 0.392 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 020/100 | Loss: 1.6079 | Top-1: 0.391 | Top-5: 0.637 | LR: 2.71e-04 | 266.6s                                      
+Epoch 021/100 | Loss: 1.5932 | Top-1: 0.411 | Top-5: 0.659 | LR: 2.69e-04 | 296.2s                                      
+  ✓ New best: 0.411 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 022/100 | Loss: 1.5770 | Top-1: 0.402 | Top-5: 0.641 | LR: 2.66e-04 | 139.3s                                      
+Epoch 023/100 | Loss: 1.5635 | Top-1: 0.430 | Top-5: 0.676 | LR: 2.63e-04 | 104.3s                                      
+  ✓ New best: 0.430 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 024/100 | Loss: 1.5472 | Top-1: 0.406 | Top-5: 0.651 | LR: 2.59e-04 | 101.7s                                      
+Epoch 025/100 | Loss: 1.5431 | Top-1: 0.415 | Top-5: 0.669 | LR: 2.56e-04 | 100.8s                                      
+Epoch 026/100 | Loss: 1.5228 | Top-1: 0.401 | Top-5: 0.652 | LR: 2.53e-04 | 97.6s                                       
+Epoch 027/100 | Loss: 1.5193 | Top-1: 0.419 | Top-5: 0.669 | LR: 2.49e-04 | 95.8s                                       
+Epoch 028/100 | Loss: 1.5065 | Top-1: 0.436 | Top-5: 0.680 | LR: 2.46e-04 | 92.1s                                       
+  ✓ New best: 0.436 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 029/100 | Loss: 1.4999 | Top-1: 0.408 | Top-5: 0.662 | LR: 2.42e-04 | 89.6s                                       
+Epoch 030/100 | Loss: 1.4882 | Top-1: 0.418 | Top-5: 0.668 | LR: 2.38e-04 | 84.9s                                       
+Epoch 031/100 | Loss: 1.4792 | Top-1: 0.429 | Top-5: 0.669 | LR: 2.35e-04 | 93.7s                                       
+Epoch 032/100 | Loss: 1.4704 | Top-1: 0.423 | Top-5: 0.652 | LR: 2.31e-04 | 106.1s                                      
+Epoch 033/100 | Loss: 1.4609 | Top-1: 0.426 | Top-5: 0.663 | LR: 2.27e-04 | 125.2s                                      
+Epoch 034/100 | Loss: 1.4566 | Top-1: 0.441 | Top-5: 0.679 | LR: 2.23e-04 | 127.5s                                      
+  ✓ New best: 0.441 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 035/100 | Loss: 1.4504 | Top-1: 0.431 | Top-5: 0.663 | LR: 2.18e-04 | 131.0s                                      
+Epoch 036/100 | Loss: 1.4438 | Top-1: 0.421 | Top-5: 0.656 | LR: 2.14e-04 | 135.1s                                      
+Epoch 037/100 | Loss: 1.4339 | Top-1: 0.447 | Top-5: 0.681 | LR: 2.10e-04 | 129.5s                                      
+  ✓ New best: 0.447 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 038/100 | Loss: 1.4296 | Top-1: 0.447 | Top-5: 0.681 | LR: 2.06e-04 | 131.3s                                      
+  ✓ New best: 0.447 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 039/100 | Loss: 1.4240 | Top-1: 0.443 | Top-5: 0.683 | LR: 2.01e-04 | 153.1s                                      
+Epoch 040/100 | Loss: 1.4140 | Top-1: 0.447 | Top-5: 0.675 | LR: 1.97e-04 | 162.2s                                      
+Epoch 041/100 | Loss: 1.4113 | Top-1: 0.430 | Top-5: 0.657 | LR: 1.92e-04 | 165.1s                                      
+Epoch 042/100 | Loss: 1.4052 | Top-1: 0.454 | Top-5: 0.680 | LR: 1.88e-04 | 163.1s                                      
+  ✓ New best: 0.454 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 043/100 | Loss: 1.3988 | Top-1: 0.455 | Top-5: 0.689 | LR: 1.83e-04 | 164.0s                                      
+  ✓ New best: 0.455 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 044/100 | Loss: 1.3940 | Top-1: 0.454 | Top-5: 0.682 | LR: 1.79e-04 | 164.2s                                      
+Epoch 045/100 | Loss: 1.3878 | Top-1: 0.438 | Top-5: 0.664 | LR: 1.74e-04 | 162.7s                                      
+Epoch 046/100 | Loss: 1.3832 | Top-1: 0.463 | Top-5: 0.689 | LR: 1.69e-04 | 155.7s                                      
+  ✓ New best: 0.463 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 047/100 | Loss: 1.3770 | Top-1: 0.461 | Top-5: 0.682 | LR: 1.65e-04 | 155.9s                                      
+Epoch 048/100 | Loss: 1.3713 | Top-1: 0.455 | Top-5: 0.676 | LR: 1.60e-04 | 125.9s                                      
+Epoch 049/100 | Loss: 1.3684 | Top-1: 0.455 | Top-5: 0.678 | LR: 1.55e-04 | 122.8s                                      
+Epoch 050/100 | Loss: 1.3651 | Top-1: 0.468 | Top-5: 0.698 | LR: 1.50e-04 | 115.8s                                      
+  ✓ New best: 0.468 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 051/100 | Loss: 1.3569 | Top-1: 0.475 | Top-5: 0.698 | LR: 1.46e-04 | 134.2s                                      
+  ✓ New best: 0.475 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 052/100 | Loss: 1.3540 | Top-1: 0.450 | Top-5: 0.677 | LR: 1.41e-04 | 98.4s                                       
+Epoch 053/100 | Loss: 1.3484 | Top-1: 0.459 | Top-5: 0.684 | LR: 1.36e-04 | 93.7s                                       
+Epoch 054/100 | Loss: 1.3439 | Top-1: 0.453 | Top-5: 0.675 | LR: 1.32e-04 | 95.7s                                       
+Epoch 055/100 | Loss: 1.3407 | Top-1: 0.467 | Top-5: 0.688 | LR: 1.27e-04 | 100.5s                                      
+Epoch 056/100 | Loss: 1.3363 | Top-1: 0.470 | Top-5: 0.693 | LR: 1.22e-04 | 105.7s                                      
+Epoch 057/100 | Loss: 1.3355 | Top-1: 0.458 | Top-5: 0.679 | LR: 1.18e-04 | 104.9s                                      
+Epoch 058/100 | Loss: 1.3332 | Top-1: 0.479 | Top-5: 0.694 | LR: 1.13e-04 | 103.9s                                      
+  ✓ New best: 0.479 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 059/100 | Loss: 1.3256 | Top-1: 0.472 | Top-5: 0.692 | LR: 1.09e-04 | 104.2s                                      
+Epoch 060/100 | Loss: 1.3252 | Top-1: 0.476 | Top-5: 0.694 | LR: 1.04e-04 | 109.8s                                      
+Epoch 061/100 | Loss: 1.3187 | Top-1: 0.476 | Top-5: 0.701 | LR: 9.99e-05 | 104.6s                                      
+Epoch 062/100 | Loss: 1.3158 | Top-1: 0.465 | Top-5: 0.691 | LR: 9.55e-05 | 105.0s                                      
+Epoch 063/100 | Loss: 1.3178 | Top-1: 0.473 | Top-5: 0.694 | LR: 9.11e-05 | 103.5s                                      
+Epoch 064/100 | Loss: 1.3092 | Top-1: 0.475 | Top-5: 0.694 | LR: 8.68e-05 | 107.6s                                      
+Epoch 065/100 | Loss: 1.3071 | Top-1: 0.485 | Top-5: 0.706 | LR: 8.26e-05 | 101.8s                                      
+  ✓ New best: 0.485 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 066/100 | Loss: 1.3034 | Top-1: 0.477 | Top-5: 0.695 | LR: 7.85e-05 | 101.1s                                      
+Epoch 067/100 | Loss: 1.3019 | Top-1: 0.462 | Top-5: 0.690 | LR: 7.44e-05 | 102.5s                                      
+Epoch 068/100 | Loss: 1.2967 | Top-1: 0.477 | Top-5: 0.698 | LR: 7.04e-05 | 105.1s                                      
+Epoch 069/100 | Loss: 1.2937 | Top-1: 0.474 | Top-5: 0.693 | LR: 6.65e-05 | 109.4s                                      
+Epoch 070/100 | Loss: 1.2909 | Top-1: 0.494 | Top-5: 0.713 | LR: 6.26e-05 | 107.8s                                      
+  ✓ New best: 0.494 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 071/100 | Loss: 1.2932 | Top-1: 0.477 | Top-5: 0.694 | LR: 5.89e-05 | 109.9s                                      
+Epoch 072/100 | Loss: 1.2875 | Top-1: 0.484 | Top-5: 0.701 | LR: 5.52e-05 | 103.9s                                      
+Epoch 073/100 | Loss: 1.2850 | Top-1: 0.490 | Top-5: 0.707 | LR: 5.16e-05 | 104.8s                                      
+Epoch 074/100 | Loss: 1.2835 | Top-1: 0.488 | Top-5: 0.705 | LR: 4.82e-05 | 103.7s                                      
+Epoch 075/100 | Loss: 1.2840 | Top-1: 0.484 | Top-5: 0.698 | LR: 4.48e-05 | 102.8s                                      
+Epoch 076/100 | Loss: 1.2784 | Top-1: 0.475 | Top-5: 0.695 | LR: 4.15e-05 | 104.5s                                      
+Epoch 077/100 | Loss: 1.2778 | Top-1: 0.486 | Top-5: 0.705 | LR: 3.84e-05 | 106.3s                                      
+Epoch 078/100 | Loss: 1.2720 | Top-1: 0.484 | Top-5: 0.702 | LR: 3.53e-05 | 104.7s                                      
+Epoch 079/100 | Loss: 1.2763 | Top-1: 0.488 | Top-5: 0.706 | LR: 3.24e-05 | 106.6s                                      
+Epoch 080/100 | Loss: 1.2745 | Top-1: 0.494 | Top-5: 0.709 | LR: 2.96e-05 | 106.5s                                      
+Epoch 081/100 | Loss: 1.2678 | Top-1: 0.495 | Top-5: 0.712 | LR: 2.69e-05 | 105.7s                                      
+  ✓ New best: 0.495 → models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+Epoch 082/100 | Loss: 1.2695 | Top-1: 0.490 | Top-5: 0.703 | LR: 2.43e-05 | 104.8s                                      
+Epoch 083/100 | Loss: 1.2696 | Top-1: 0.494 | Top-5: 0.709 | LR: 2.18e-05 | 111.6s                                      
+Epoch 084/100 | Loss: 1.2697 | Top-1: 0.489 | Top-5: 0.705 | LR: 1.95e-05 | 108.9s                                      
+Epoch 085/100 | Loss: 1.2681 | Top-1: 0.490 | Top-5: 0.708 | LR: 1.73e-05 | 107.6s                                      
+Epoch 086/100 | Loss: 1.2639 | Top-1: 0.491 | Top-5: 0.712 | LR: 1.52e-05 | 107.9s                                      
+Epoch 087/100 | Loss: 1.2626 | Top-1: 0.483 | Top-5: 0.701 | LR: 1.33e-05 | 108.1s                                      
+Epoch 088/100 | Loss: 1.2636 | Top-1: 0.486 | Top-5: 0.705 | LR: 1.15e-05 | 109.7s                                      
+Epoch 089/100 | Loss: 1.2622 | Top-1: 0.487 | Top-5: 0.704 | LR: 9.84e-06 | 109.1s                                      
+Epoch 090/100 | Loss: 1.2634 | Top-1: 0.488 | Top-5: 0.704 | LR: 8.32e-06 | 108.0s                                      
+Epoch 091/100 | Loss: 1.2574 | Top-1: 0.489 | Top-5: 0.704 | LR: 6.94e-06 | 107.0s                                      
+Epoch 092/100 | Loss: 1.2630 | Top-1: 0.489 | Top-5: 0.706 | LR: 5.70e-06 | 108.8s                                      
+Epoch 093/100 | Loss: 1.2604 | Top-1: 0.490 | Top-5: 0.705 | LR: 4.60e-06 | 108.4s                                      
+Epoch 094/100 | Loss: 1.2599 | Top-1: 0.489 | Top-5: 0.707 | LR: 3.65e-06 | 108.5s                                      
+Epoch 095/100 | Loss: 1.2612 | Top-1: 0.492 | Top-5: 0.708 | LR: 2.84e-06 | 108.6s                                      
+Epoch 096/100 | Loss: 1.2584 | Top-1: 0.491 | Top-5: 0.706 | LR: 2.18e-06 | 109.1s                                      
+Epoch 097/100 | Loss: 1.2587 | Top-1: 0.491 | Top-5: 0.707 | LR: 1.66e-06 | 109.2s                                      
+Epoch 098/100 | Loss: 1.2594 | Top-1: 0.489 | Top-5: 0.705 | LR: 1.30e-06 | 107.9s                                      
+Epoch 099/100 | Loss: 1.2576 | Top-1: 0.488 | Top-5: 0.706 | LR: 1.07e-06 | 108.7s                                      
+Epoch 100/100 | Loss: 1.2603 | Top-1: 0.489 | Top-5: 0.707 | LR: 1.00e-06 | 108.3s                                      
+
+Distillation complete.
+Best Top-1: 0.495
+Checkpoint: models/checkpoints/distill_s128l3_a5_t4_v1896_combined_best.pt
+
+=== Per-class accuracy breakdown ===
+Top-10 classes:                                                                                                         
+  why                       3/3  (100%)
+  brother                   3/3  (100%)
+  beard                     3/3  (100%)
+  dress                     3/3  (100%)
+  many                      3/3  (100%)
+  more                      3/3  (100%)
+  football                  3/3  (100%)
+  move                      3/3  (100%)
+  last                      3/3  (100%)
+  graduate                  3/3  (100%)
+Bottom-10 classes:
+  town                      0/1  (0%)
+  food                      0/1  (0%)
+  necklace                  0/1  (0%)
+  right                     0/1  (0%)
+  arm                       0/1  (0%)
+  what                      0/1  (0%)
+  turkey                    0/1  (0%)
+  police                    0/1  (0%)
+  short                     0/1  (0%)
+  approve                   0/1  (0%)
+
+Classes with 0% accuracy: 374/1896
+Per-class saved → results/metrics/distill_s128l3_a5_t4_v1896_combined_per_class.json
