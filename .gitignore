@@ -68,3 +68,6 @@ data/processed/*.zip
 zips/*
 data/processed/wlasl/*
 .DS_Store
+
+node_modules/
+
