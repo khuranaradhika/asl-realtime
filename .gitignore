@@ -1,6 +1,7 @@
 # Virtual environment
 venv/
 .venv/
+.env
 
 # Raw videos — too large, run downloader locally
 data/raw/wlasl/videos/
@@ -9,16 +10,25 @@ data/raw/msasl/videos/
 # MediaPipe model file
 data/*.task
 
-# Model checkpoints
-models/checkpoints/
 
-# Processed keypoints — hosted on HuggingFace instead
+# Processed keypoints — large binary files, regenerate locally
 data/processed/train/
 data/processed/val/
 data/processed/test/
+data/processed/aslcitizen/
+data/processed/msasl_train/
+
+# HuggingFace download cache
+data/hf_cache/
+
+# Experiment results (metrics are committed, large artifacts are not)
+results/plots/
+results/exports/
 
 # Sensitive files
-cookies.txt
+.env
+data/raw/msasl/cookies.txt
+scripts/cookies.txt
 failed_downloads.jsonl
 
 # Python
@@ -34,3 +44,27 @@ Thumbs.db
 # Experiments
 wandb/
 runs/
+data/processed/aslense/
+data/processed/train/
+data/processed/val/
+data/processed/test/
+data/processed/train/
+data/processed/val/
+data/processed/test/
+data/processed/aslense/
+data/processed/train/
+data/processed/val/
+data/processed/test/
+data/processed/train/
+data/processed/val/
+data/processed/test/
+data/processed/aslense/
+data/raw/wlasl/videos/
+data/raw/aslense/
+data/raw/msasl/videos/
+data/processed/*.zip
+
+
+zips/*
+data/processed/wlasl/*
+.DS_Store

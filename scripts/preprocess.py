@@ -10,20 +10,31 @@ WLASL videos and save as .npy files with a split manifest. Run from project root
 """
 
 import os
+import sys
 import json
 import argparse
 import numpy as np
 from pathlib import Path
 from tqdm import tqdm
 
+# Allow running as `python scripts/preprocess.py` from project root
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 import cv2
 
-from src.config import DATA_RAW_DIR, DATA_PROC_DIR, KEYPOINT_DIM
-from src.keypoints import get_hand_detector, extract_keypoints_from_frame
+from src.config import DATA_RAW_DIR, DATA_PROC_DIR, KEYPOINT_DIM, HOLISTIC_DIM
+from src.keypoints import (get_hand_detector, extract_keypoints_from_frame,
+                            get_holistic_detector, extract_holistic_from_frame)
 
 
-def extract_keypoints_from_video(video_path: str, detector) -> np.ndarray:
-    """Run keypoint extraction on every frame of a video. Returns (T, 126) array."""
+def extract_keypoints_from_video(video_path: str, detector, holistic: bool = False) -> np.ndarray:
+    """Run keypoint extraction on every frame of a video.
+
+    Returns:
+        (T, 126) array  — hand-only mode (holistic=False)
+        (T, 225) array  — holistic mode  (holistic=True)
+    """
+    dim         = HOLISTIC_DIM if holistic else KEYPOINT_DIM
     cap         = cv2.VideoCapture(video_path)
     frames_kpts = []
 
@@ -31,17 +42,25 @@ def extract_keypoints_from_video(video_path: str, detector) -> np.ndarray:
         ret, frame = cap.read()
         if not ret:
             break
-        rgb       = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        kpts, _   = extract_keypoints_from_frame(rgb, detector)
+        rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        if holistic:
+            kpts = extract_holistic_from_frame(rgb, detector)
+        else:
+            kpts, _ = extract_keypoints_from_frame(rgb, detector)
         frames_kpts.append(kpts)
 
     cap.release()
-    return np.stack(frames_kpts) if frames_kpts else np.zeros((1, KEYPOINT_DIM), dtype=np.float32)
+    return np.stack(frames_kpts) if frames_kpts else np.zeros((1, dim), dtype=np.float32)
 
 
-def preprocess_dataset(split: str = "train", vocab_size: int = 100):
-    """Extract keypoints for all videos in a split and save as .npy files."""
-    proc_dir = DATA_PROC_DIR / split
+def preprocess_dataset(split: str = "train", vocab_size: int = 100, holistic: bool = False):
+    """Extract keypoints for all videos in a split and save as .npy files.
+
+    If holistic=True, saves 225-dim keypoints to data/processed/{split}_holistic/
+    and writes {split}_holistic_manifest.json. Existing hand-only files are untouched.
+    """
+    suffix   = "_holistic" if holistic else ""
+    proc_dir = DATA_PROC_DIR / f"{split}{suffix}"
     proc_dir.mkdir(parents=True, exist_ok=True)
 
     anno_path = DATA_RAW_DIR / "WLASL_v0.3.json"
@@ -64,10 +83,10 @@ def preprocess_dataset(split: str = "train", vocab_size: int = 100):
         json.dump(vocab, f, indent=2)
     print(f"Vocabulary: {len(vocab)} signs")
 
-    detector = get_hand_detector()
+    detector = get_holistic_detector() if holistic else get_hand_detector()
     manifest = []
 
-    for entry in tqdm(data, desc=f"Extracting {split}"):
+    for entry in tqdm(data, desc=f"Extracting {split}{' (holistic)' if holistic else ''}"):
         gloss = entry["gloss"]
         if gloss not in vocab:
             continue
@@ -83,7 +102,7 @@ def preprocess_dataset(split: str = "train", vocab_size: int = 100):
 
             save_path = proc_dir / f"{video_id}.npy"
             if not save_path.exists():
-                kpts = extract_keypoints_from_video(video_path, detector)
+                kpts = extract_keypoints_from_video(video_path, detector, holistic=holistic)
                 np.save(str(save_path), kpts)
 
             manifest.append({
@@ -92,17 +111,23 @@ def preprocess_dataset(split: str = "train", vocab_size: int = 100):
                 "label_idx": label_idx,
             })
 
-    detector.close()
+    if holistic:
+        detector.close()
+    else:
+        detector.close()
 
-    with open(DATA_PROC_DIR / f"{split}_manifest.json", "w") as f:
+    manifest_name = f"{split}{suffix}_manifest.json"
+    with open(DATA_PROC_DIR / manifest_name, "w") as f:
         json.dump(manifest, f, indent=2)
-    print(f"{split}: {len(manifest)} samples saved")
+    print(f"{split}{suffix}: {len(manifest)} samples saved")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--split", type=str, default="train",
+    parser.add_argument("--split",    type=str,  default="train",
                         choices=["train", "val", "test"])
-    parser.add_argument("--vocab", type=int, default=2000)
+    parser.add_argument("--vocab",    type=int,  default=300)
+    parser.add_argument("--holistic", action="store_true",
+                        help="Extract 225-dim holistic keypoints (hands + full body pose)")
     args = parser.parse_args()
-    preprocess_dataset(split=args.split, vocab_size=args.vocab)
+    preprocess_dataset(split=args.split, vocab_size=args.vocab, holistic=args.holistic)
