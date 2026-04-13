@@ -71,3 +71,5 @@ data/processed/wlasl/*
 
 node_modules/
 
+/models/*.onnx
+/models/*.onnx.data
