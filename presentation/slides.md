@@ -61,14 +61,19 @@ Webcam → MediaPipe → 126 floats/frame
 </div>
 </div>
 
+
 ---
-src: ./pages/02-data.md
+src: ./pages/01-jian.md
 ---
 
 ---
-src: ./pages/03-architecture.md
+src: ./pages/02-radhika.md
 ---
 
 ---
-src: ./pages/04-demo.md
+src: ./pages/03-hrishikesh.md
+---
+
+---
+src: ./pages/04-gyula.md
 ---
