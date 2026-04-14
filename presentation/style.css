@@ -1,0 +1,46 @@
+/* Cards — lighter, more breathing room, subtle border like the PDF */
+.card {
+  background: #f8f8f9;
+  border: 1px solid #e5e5e7;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+/* Callouts — softer, more padding */
+.callout {
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.callout-blue   { background: #f0f4ff; border: 1px solid #d0ddf7; color: #1e3a6e; }
+.callout-green  { background: #f0faf4; border: 1px solid #c2ecd0; color: #145230; }
+.callout-yellow { background: #fffbe6; border: 1px solid #f0e4a8; color: #6b4c10; }
+/* Add a red/danger callout to match the PDF's failure analysis style */
+.callout-red    { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
+
+/* Stats — thinner weight like the PDF's big numbers */
+.stat-number {
+  font-size: 3rem;
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Quote — thinner border, more muted */
+.quote {
+  border-left: 3px solid #d1d5db;
+  padding-left: 1.25rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
