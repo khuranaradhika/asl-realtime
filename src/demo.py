@@ -139,22 +139,63 @@ def run_demo(onnx_path: str, vocab_size: int = 2000, conf_threshold: float = 0.1
         fps = np.mean(fps_tracker)
 
         h, w = frame.shape[:2]
-        cv2.rectangle(frame, (0, h - 80), (w, h), (0, 0, 0), -1)
-        cv2.putText(frame, current_word,
-                    (20, h - 30), cv2.FONT_HERSHEY_SIMPLEX,
-                    1.4, (255, 255, 255), 2)
+
+        # ── Centered prediction label ────────────────────────────────────────
+        word_text  = current_word.upper()
+        word_scale = 3.0
+        word_thick = 5
+        font       = cv2.FONT_HERSHEY_SIMPLEX
+        (tw, th), baseline = cv2.getTextSize(word_text, font, word_scale, word_thick)
+
+        # Place word at 68% down the frame
+        word_x = (w - tw) // 2
+        word_y = int(h * 0.68) + th
+
+        # Semi-transparent background behind word
+        pad = 18
+        overlay = frame.copy()
+        cv2.rectangle(overlay,
+                      (word_x - pad, word_y - th - pad),
+                      (word_x + tw + pad, word_y + baseline + pad),
+                      (0, 0, 0), -1)
+        cv2.addWeighted(overlay, 0.45, frame, 0.55, 0, frame)
+
+        cv2.putText(frame, word_text,
+                    (word_x, word_y), font,
+                    word_scale, (255, 255, 255), word_thick, cv2.LINE_AA)
+
+        # ── Confidence bar ───────────────────────────────────────────────────
+        bar_w      = tw + pad * 2          # same width as word background
+        bar_h      = 14
+        bar_x      = word_x - pad
+        bar_y      = word_y + baseline + pad + 8
+        fill_w     = int(bar_w * min(current_conf, 1.0))
+
+        # Background track
+        cv2.rectangle(frame, (bar_x, bar_y), (bar_x + bar_w, bar_y + bar_h),
+                      (60, 60, 60), -1)
+        # Filled portion — green → yellow → red based on confidence
+        if current_conf >= conf_threshold:
+            bar_color = (50, 220, 50)
+        else:
+            bar_color = (50, 100, 220)
+        if fill_w > 0:
+            cv2.rectangle(frame, (bar_x, bar_y), (bar_x + fill_w, bar_y + bar_h),
+                          bar_color, -1)
+
+        pct_text = f"{current_conf * 100:.0f}%"
+        (pw, _), _ = cv2.getTextSize(pct_text, font, 0.55, 1)
+        cv2.putText(frame, pct_text,
+                    (bar_x + bar_w + 8, bar_y + bar_h - 2), font,
+                    0.55, (220, 220, 220), 1, cv2.LINE_AA)
+
+        # ── Corner debug info ────────────────────────────────────────────────
         cv2.putText(frame, f"FPS: {fps:.0f}",
-                    (w - 120, 30), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.7, (0, 255, 0), 1)
+                    (w - 120, 30), font, 0.7, (0, 255, 0), 1, cv2.LINE_AA)
         cv2.putText(frame, f"Buffer: {len(frame_buffer)}/{WINDOW_FRAMES}",
-                    (20, 30), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.6, (200, 200, 200), 1)
-        cv2.putText(frame, f"Conf: {current_conf:.2f} (min {conf_threshold:.2f})",
-                    (20, 55), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.6, (200, 200, 200), 1)
-        cv2.putText(frame, f"Hands: {int(hand_ratio*100)}% of buffer",
-                    (20, 80), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.6, (200, 200, 200), 1)
+                    (20, 30), font, 0.6, (200, 200, 200), 1, cv2.LINE_AA)
+        cv2.putText(frame, f"min conf: {conf_threshold:.2f}",
+                    (20, 55), font, 0.6, (200, 200, 200), 1, cv2.LINE_AA)
 
         cv2.imshow("ASL Real-Time Demo — Q to quit", frame)
         if cv2.waitKey(1) & 0xFF == ord("q"):
