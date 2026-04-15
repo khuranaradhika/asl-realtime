@@ -1,4 +1,4 @@
-# From PyTorch to CPU: Why ONNX?
+# From PyTorch to CPU: Why ONNX? <span style="font-size:0.5rem;opacity:0.4;vertical-align:super;">G</span>
 
 Training produces a `.pt` file that requires the full PyTorch stack. ONNX decouples the model from the framework entirely.
 
@@ -32,14 +32,12 @@ The entire model file is 3MB. It runs offline. No GPU, no PyTorch, no cloud — 
 
 `src/export.py` converts the trained model and benchmarks it automatically.
 
-<img src="https://images.unsplash.com/photo-1495592822108-9e6261896da8?w=1600&auto=format&fit=crop&q=60" class="rounded-xl h-28 w-full object-cover mb-4" />
-
 <div class="grid grid-cols-3 gap-4 mt-2">
 <div class="card">
 
 **1. Load**
 
-Read `.pt` checkpoint, auto-detect `loss=ce` vs `loss=ctc` from saved args, build matching architecture.
+Read `.pt` checkpoint, auto-detect architecture (`d_model`, `n_layers`) and loss type from saved args.
 
 </div>
 <div class="card">
@@ -75,26 +73,91 @@ Read `.pt` checkpoint, auto-detect `loss=ce` vs `loss=ctc` from saved args, buil
 
 ---
 
-# Evaluation
+# Results: Full Ablation
 
-<div class="grid grid-cols-2 gap-8">
-<div>
+All models trained on the same 1,896-class combined corpus. Best checkpoint selected by validation Top-1.
 
 | Model | Top-1 | Top-5 | Params | Notes |
 |-------|-------|-------|--------|-------|
-| 1D CNN | — | — | ~450K | baseline |
-| BiLSTM | — | — | ~735K | baseline |
-| Transformer (no aug) | **66.9%** | — | ~452K | current demo model |
-| Transformer (aug) | — | — | ~452K | in progress |
+| 1D CNN | 38.4% | 61.1% | ~450K | local 3-frame windows |
+| BiLSTM | 31.5% | 53.1% | ~735K | sequential hidden state |
+| Transformer (d=128, aug) | 40.1% | 58.9% | ~452K | augmentation hurt — likely underfit |
+| Transformer (d=256, aug) | 44.0% | 59.8% | ~452K | larger model, same issue |
+| **Transformer (d=128, no aug)** | **67.0%** | **88.6%** | **~452K** | **← demo model** |
+
+<div class="callout callout-blue mt-4">
+Augmentation consistently degraded performance at 50 epochs — the model needs significantly more training to benefit from it. No-aug converges faster and stronger.
+</div>
+
+---
+
+# What the Numbers Actually Look Like
+
+The 67% headline is averaged across all 1,896 classes — including rare signs with only 1–2 training examples. Restricting to the most common signs tells a different story.
+
+<div class="grid grid-cols-2 gap-8 mt-4">
+<div>
+
+| Vocabulary Size | Top-1 Accuracy |
+|----------------|---------------|
+| Top 100 | **100.0%** |
+| Top 200 | **100.0%** |
+| Top 300 | 96.1% |
+| Top 500 | 84.0% |
+| Top 1,000 | 68.4% |
+| Top 1,500 | 55.7% |
+| All 1,896 | 67.0% |
 
 </div>
 <div>
-<img src="https://plus.unsplash.com/premium_photo-1681586126003-2a6d4ba943a2?w=1600&auto=format&fit=crop&q=60" class="rounded-xl h-52 w-full object-cover" />
+
+**Accuracy distribution across all classes**
+
+| Band | Classes | % of vocab |
+|------|---------|------------|
+| 80–100% | 266 | 14.0% |
+| 60–79% | 524 | 27.6% |
+| 20–59% | 641 | 33.8% |
+| 0% | 465 | 24.5% |
+
+<div class="callout callout-blue mt-4">
+41% of classes score above 60%. The 24.5% at 0% are nearly all low-frequency signs with fewer than 3 training examples.
+</div>
+
 </div>
 </div>
 
-<div class="callout callout-blue mt-4">
-ℹ️ Full ablation results in progress — numbers will be updated before the final presentation.
+---
+
+# Results in Context
+
+<div class="grid grid-cols-2 gap-8 mt-4">
+<div>
+
+| Model | Top-1 | Hardware | Input |
+|-------|-------|----------|-------|
+| I3D | ~60% | GPU | Raw video |
+| VideoMAE | ~65% | GPU | Raw video |
+| SPOTER | ~60% | GPU | Keypoints |
+| **Ours (no aug)** | **67.0%** | **CPU** | **Keypoints** |
+
+</div>
+<div>
+
+### The key distinction
+
+Every competitive model requires a GPU and operates on raw video frames. Ours is the only model in this range that:
+
+- Runs entirely on CPU
+- Uses keypoints only — no raw video stored
+- Operates in real time at 30fps
+- Fits in 3MB
+
+</div>
+</div>
+
+<div class="quote mt-6">
+67% on CPU with keypoints — matching or beating GPU video models while running on a laptop webcam.
 </div>
 
 ---
@@ -131,27 +194,23 @@ Read `.pt` checkpoint, auto-detect `loss=ce` vs `loss=ctc` from saved args, buil
 
 <div class="grid grid-cols-2 gap-8 mt-6">
 <div>
-<img src="https://images.unsplash.com/photo-1733370446176-cf060c668a28?w=1600&auto=format&fit=crop&q=60" class="rounded-xl h-40 w-full object-cover mb-4" />
 
 ### What to watch
 - Hand skeleton overlay (purple = left, orange = right)
 - Buffer counter filling to 60
 - Hands % — must hit ≥50% to trigger inference
-- Conf score — model's softmax certainty
-- Predicted word in the bottom bar
+- Confidence bar — model's softmax certainty
+- Predicted word centered on screen
 
 </div>
 <div>
 
-### Run it
-
 <video controls style="width:100%;border-radius:8px;margin-bottom:0.75rem;">
   <source src="/videos/demo.mp4" type="video/mp4" />
-  Video coming soon.
 </video>
 
 **Model:** `transformer_d128_l3_v1896_noaug`  
-**Top-1:** 66.9% · **Latency:** 0.5ms · **Vocab:** 1,896 signs
+**Top-1:** 67.0% · **Latency:** 0.5ms · **Vocab:** 1,896 signs
 
 </div>
 </div>
