@@ -20,7 +20,15 @@ def get_hand_detector():
         url = ("https://storage.googleapis.com/mediapipe-models/"
                "hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task")
         print("Downloading MediaPipe hand model...")
-        urllib.request.urlretrieve(url, str(model_path))
+        import ssl
+        try:
+            import certifi
+            ssl_ctx = ssl.create_default_context(cafile=certifi.where())
+        except ImportError:
+            ssl_ctx = ssl._create_unverified_context()
+        with urllib.request.urlopen(url, context=ssl_ctx) as r, \
+             open(str(model_path), "wb") as f:
+            f.write(r.read())
         print("Done.")
 
     BaseOptions           = mp.tasks.BaseOptions
