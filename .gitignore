@@ -77,3 +77,4 @@ models/*.data
 
 .DS_Storepresentation/videos/*.mp4
 models/demo/*.mp4
+presentation/videos/
