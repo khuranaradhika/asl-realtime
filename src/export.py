@@ -28,18 +28,22 @@ def export_to_onnx(checkpoint_path: str, output_path: str = "models/sign_model.o
     loss_type   = saved_args.get("loss", "ctc")   # old checkpoints default to ctc
     model_type  = saved_args.get("model", "transformer")
 
+    d_model  = saved_args.get("d_model",  128)
+    n_layers = saved_args.get("n_layers", 3)
+
     if model_type == "cnn":
         model = build_cnn_baseline(n_classes=vocab_size)
     elif model_type == "lstm":
         model = build_lstm_baseline(n_classes=vocab_size)
     elif loss_type == "ce":
-        model = build_student_classifier(n_classes=vocab_size)
+        model = build_student_classifier(n_classes=vocab_size,
+                                         d_model=d_model, n_layers=n_layers)
     else:
         model = build_student_model(n_classes=vocab_size)
 
     model.load_state_dict(ckpt["model_state"])
     model.eval()
-    print(f"Model type: {model.__class__.__name__} (loss={loss_type})")
+    print(f"Model type: {model.__class__.__name__} (loss={loss_type}, d_model={d_model}, n_layers={n_layers})")
     print(f"Loaded checkpoint: Top-1 = {ckpt.get('top1', 'N/A'):.3f}")
 
     dummy_kpts = torch.randn(1, 80, 126)
