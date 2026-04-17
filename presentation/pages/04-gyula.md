@@ -93,19 +93,19 @@ Augmentation consistently degraded performance at 50 epochs — the model needs 
 
 # What the Numbers Actually Look Like
 
-The 67% headline is averaged across all 1,896 classes — including rare signs with only 1–2 training examples. Restricting to the most common signs tells a different story.
+The 67% headline is averaged across all 1,896 classes — including rare signs with only 1–2 training examples. The model's accuracy is remarkably stable across vocabulary sizes.
 
 <div class="grid grid-cols-2 gap-8 mt-4">
 <div>
 
 | Vocabulary Size | Top-1 Accuracy |
 |----------------|---------------|
-| Top 100 | **100.0%** |
-| Top 200 | **100.0%** |
-| Top 300 | 96.1% |
-| Top 500 | 84.0% |
-| Top 1,000 | 68.4% |
-| Top 1,500 | 55.7% |
+| Top 100 | 68.3% |
+| Top 200 | 68.5% |
+| Top 300 | 69.8% |
+| Top 500 | 69.9% |
+| Top 1,000 | 66.9% |
+| Top 1,500 | 67.0% |
 | All 1,896 | 67.0% |
 
 </div>
@@ -115,13 +115,13 @@ The 67% headline is averaged across all 1,896 classes — including rare signs w
 
 | Band | Classes | % of vocab |
 |------|---------|------------|
-| 80–100% | 266 | 14.0% |
-| 60–79% | 524 | 27.6% |
-| 20–59% | 641 | 33.8% |
-| 0% | 465 | 24.5% |
+| 100% | 653 | 34.4% |
+| 60–99% | 702 | 37.0% |
+| 20–59% | 405 | 21.4% |
+| 0% | 136 | 7.2% |
 
 <div class="callout callout-blue mt-4">
-41% of classes score above 60%. The 24.5% at 0% are nearly all low-frequency signs with fewer than 3 training examples.
+71.5% of classes score above 60%. Only 7.2% sit at 0% — nearly all low-frequency signs with fewer than 3 training examples.
 </div>
 
 </div>
@@ -196,7 +196,7 @@ Every competitive model requires a GPU and operates on raw video frames. Ours is
 <div>
 
 ### What to watch
-- Hand skeleton overlay (purple = left, orange = right)
+- Hand skeleton overlay (navy = left, azure = right)
 - Buffer counter filling to 60
 - Hands % — must hit ≥50% to trigger inference
 - Confidence bar — model's softmax certainty
