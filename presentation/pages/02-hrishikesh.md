@@ -1,74 +1,195 @@
-# Models Compared
-
-Three temporal modeling approaches on the same data and training setup.
-
-| Model | How it sees time | Params | Loss |
-|-------|-----------------|--------|------|
-| 1D CNN | Local 3-frame windows | ~450K | Cross-entropy |
-| BiLSTM | Sequential hidden state | ~735K | Cross-entropy |
-| **Transformer** | Full self-attention across all frames | ~452K | Cross-entropy |
-
-All use **label smoothing (0.1)** + global average pooling for isolated word classification.
-
----
-
-# Transformer Architecture
+# Pipeline
 
 ```
-Input: (B, T, 126) keypoint sequences
-  → Linear projection:  126 → 128    (d_model)
-  → Sinusoidal positional encoding
-  → 3 × TransformerEncoderLayer
-      - 4 attention heads
-      - FFN dim: 256
-      - Pre-norm (norm_first=True)
-      - Dropout: 0.1
-  → Global mean pool over non-padded frames
-  → Linear classifier: 128 → 1,896
-  → Cross-entropy loss
+Webcam / Video
+      ↓
+MediaPipe HandLandmarker  (~8 ms/frame)
+      ↓
+  (T, 126) keypoints       21 landmarks × 3 (xyz) × 2 hands
+      ↓
+Temporal Transformer       ~5 ms inference on CPU
+      ↓
+   ASL Word
 ```
 
-**AdamW** · lr=3e-4 · cosine annealing · gradient clipping
+MediaPipe extracts hand skeleton — **no raw video reaches the model**.
 
 ---
 
-# Knowledge Distillation
+# Keypoint Extraction
 
-Student model (CPU-deployable) trained to mimic a larger teacher.
+Each video frame → **126-dimensional vector**
 
-<div class="grid grid-cols-2 gap-8">
-<div>
+```
+Left hand:   21 landmarks × (x, y, z) = 63 floats
+Right hand:  21 landmarks × (x, y, z) = 63 floats
+─────────────────────────────────────────────────
+Total:                                  126 floats/frame
+```
 
-### Teacher
-- d_model = 512, 6 layers, 8 heads
-- ~18M parameters
-- GPU only
-
-</div>
-<div>
-
-### Student
-- d_model = 128, 3 layers, 4 heads
-- ~672K parameters
-- Runs on CPU in <15ms
-
-</div>
-</div>
-
-Student loss = α × CE(student, labels) + (1−α) × KL(student ∥ teacher)
+Stored as `.npy` files of shape `(T, 126)` — one per video clip.
 
 ---
 
-# Results
+# Augmentations
 
-| Model | Top-1 | Top-5 | Params | Notes |
-|-------|-------|-------|--------|-------|
-| 1D CNN | — | — | ~450K | baseline |
-| BiLSTM | — | — | ~735K | baseline |
-| Transformer (no aug) | — | — | ~452K | ablation |
-| Transformer | **40.8%** | **56.4%** | ~452K | 150 epochs, MPS |
-| **Distilled student** | — | — | ~672K | **← this model** |
+Applied during training only.
 
-Random baseline: 0.33% (1/1896). Best result = **124× above random**.
+| Augmentation | Description | Effect |
+|---|---|---|
+| Horizontal flip | Swap left/right hands, mirror x | Doubles effective dataset size |
+| Temporal jitter | Randomly drop or repeat frames | Robustness to dropped frames |
+| Gaussian noise | σ=0.01 on all coordinates | Simulates MediaPipe detection noise |
+| Wrist normalization | Subtract dominant wrist position | Translation invariance |
 
-State-of-the-art (I3D, VideoMAE) reaches ~60–65% using raw video on GPU.
+---
+
+# CNN Baseline: Local Temporal Patterns
+
+A lightweight convolutional baseline to establish a lower bound on model complexity.
+
+<div class="grid grid-cols-2 gap-6 mt-6">
+<div>
+
+**Architecture**
+
+```
+Input (B, T, 126)
+    ↓
+Linear projection → d=128
+    ↓
+4 × Conv1d residual blocks
+  (kernel=3, causal padding)
+    ↓
+Linear classifier → C
+    ↓
+Output (B, C) or (T, B, C+1)
+```
+
+</div>
+<div>
+
+**Key Properties**
+
+- **Receptive field**: 3×7 = ~21 frames max
+- **Parameters**: ~560K
+- **CPU inference**: ~2–3ms (fastest)
+- **No long-range memory**: Cannot model sign endpoints 2+ seconds away
+
+</div>
+</div>
+
+---
+
+# CNN Baseline: Trade-offs
+
+<div class="grid grid-cols-3 gap-4 mt-6">
+<div class="card">
+
+**✓ Strengths**
+
+- Fastest CPU inference
+- Captures local motion
+- Simplest to debug
+
+</div>
+<div class="card">
+
+**✗ Weaknesses**
+
+- **No long-range context**
+- Brittle to variable signing speed
+- ~10–15% lower accuracy than Transformer
+
+</div>
+<div class="card">
+
+**Empirical Result**
+
+Top-1 accuracy: **~62%** on 1,896-class vocab
+
+(Transformer: ~72%)
+
+</div>
+</div>
+
+<div class="quote mt-6">
+**Lesson**: Convolutional locality is fundamentally limiting for sign language. Signs are defined by temporal *dynamics* — the relationship between frame 1 and frame 80 matters.
+</div>
+
+---
+
+# LSTM Baseline: Sequential Hidden State
+
+Bidirectional LSTM: maintains a hidden state across all frames, no positional encoding needed.
+
+<div class="grid grid-cols-2 gap-6 mt-6">
+<div>
+
+**Architecture**
+
+```
+Input (B, T, 126)
+    ↓
+2 × stacked BiLSTM
+  (hidden=128 → 256 bidirectional)
+    ↓
+Dropout
+    ↓
+Linear classifier → C
+    ↓
+Output (B, C) or (T, B, C+1)
+```
+
+</div>
+<div>
+
+**Key Properties**
+
+- **Memory span**: All frames — implicit gate weighting
+- **Parameters**: ~560K
+- **CPU inference**: ~3–5ms (middle ground)
+- **Bidirectional**: Forward + backward context
+
+</div>
+</div>
+
+---
+
+# LSTM Baseline: Trade-offs
+
+<div class="grid grid-cols-3 gap-4 mt-6">
+<div class="card">
+
+**✓ Strengths**
+
+- **Full temporal span**
+- No positional encoding
+- 3× faster than Transformer
+- Implicit gate weighting
+
+</div>
+<div class="card">
+
+**✗ Weaknesses**
+
+- Hidden state bottleneck
+- Weaker long-range modeling
+- Sequential computation
+- ~5–8% lower accuracy
+
+</div>
+<div class="card">
+
+**Empirical Result**
+
+Top-1 accuracy: **~67–68%** on 1,896-class vocab
+
+(CNN: ~62%, Transformer: ~72%)
+
+</div>
+</div>
+
+<div class="quote mt-6">
+**Insight**: BiLSTM bridges the gap—full temporal coverage but weaker attention than Transformer. Good efficiency-accuracy trade-off.
+</div>

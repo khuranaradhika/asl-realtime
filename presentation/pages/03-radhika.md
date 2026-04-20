@@ -1,58 +1,74 @@
-# Datasets
+# Models Compared
 
-We train on a combined corpus of three datasets filtered to **vocab = 1,896**.
+Three temporal modeling approaches on the same data and training setup.
 
-| Dataset | Role | Clips | Classes |
-|---------|------|-------|---------|
-| WLASL | Train + in-distribution eval | ~4,143 train / 1,208 val | 2,000 |
-| ASL Citizen | Train only | 1,542 | ~300 |
-| Aslense | Train only | 53,933 | 2,208 |
-| **Combined** | **Training corpus** | **52,998 train / 5,567 val** | **1,896** |
+| Model | How it sees time | Params | Loss |
+|-------|-----------------|--------|------|
+| 1D CNN | Local 3-frame windows | ~450K | Cross-entropy |
+| BiLSTM | Sequential hidden state | ~735K | Cross-entropy |
+| **Transformer** | Full self-attention across all frames | ~452K | Cross-entropy |
 
-~28 samples per class on average.
-
----
-
-# Pipeline
-
-```
-Webcam / Video
-      ↓
-MediaPipe HandLandmarker  (~8 ms/frame)
-      ↓
-  (T, 126) keypoints       21 landmarks × 3 (xyz) × 2 hands
-      ↓
-Temporal Transformer       ~5 ms inference on CPU
-      ↓
-   ASL Word
-```
-
-MediaPipe extracts hand skeleton — **no raw video reaches the model**.
+All use **label smoothing (0.1)** + global average pooling for isolated word classification.
 
 ---
 
-# Keypoint Extraction
-
-Each video frame → **126-dimensional vector**
+# Transformer Architecture
 
 ```
-Left hand:   21 landmarks × (x, y, z) = 63 floats
-Right hand:  21 landmarks × (x, y, z) = 63 floats
-─────────────────────────────────────────────────
-Total:                                  126 floats/frame
+Input: (B, T, 126) keypoint sequences
+  → Linear projection:  126 → 128    (d_model)
+  → Sinusoidal positional encoding
+  → 3 × TransformerEncoderLayer
+      - 4 attention heads
+      - FFN dim: 256
+      - Pre-norm (norm_first=True)
+      - Dropout: 0.1
+  → Global mean pool over non-padded frames
+  → Linear classifier: 128 → 1,896
+  → Cross-entropy loss
 ```
 
-Stored as `.npy` files of shape `(T, 126)` — one per video clip.
+**AdamW** · lr=3e-4 · cosine annealing · gradient clipping
 
 ---
 
-# Augmentations
+# Knowledge Distillation
 
-Applied during training only.
+Student model (CPU-deployable) trained to mimic a larger teacher.
 
-| Augmentation | Description | Effect |
-|---|---|---|
-| Horizontal flip | Swap left/right hands, mirror x | Doubles effective dataset size |
-| Temporal jitter | Randomly drop or repeat frames | Robustness to dropped frames |
-| Gaussian noise | σ=0.01 on all coordinates | Simulates MediaPipe detection noise |
-| Wrist normalization | Subtract dominant wrist position | Translation invariance |
+<div class="grid grid-cols-2 gap-8">
+<div>
+
+### Teacher
+- d_model = 512, 6 layers, 8 heads
+- ~18M parameters
+- GPU only
+
+</div>
+<div>
+
+### Student
+- d_model = 128, 3 layers, 4 heads
+- ~672K parameters
+- Runs on CPU in <15ms
+
+</div>
+</div>
+
+Student loss = α × CE(student, labels) + (1−α) × KL(student ∥ teacher)
+
+---
+
+# Results
+
+| Model | Top-1 | Top-5 | Params | Notes |
+|-------|-------|-------|--------|-------|
+| 1D CNN | — | — | ~450K | baseline |
+| BiLSTM | — | — | ~735K | baseline |
+| Transformer (no aug) | — | — | ~452K | ablation |
+| Transformer | **40.8%** | **56.4%** | ~452K | 150 epochs, MPS |
+| **Distilled student** | — | — | ~672K | **← this model** |
+
+Random baseline: 0.33% (1/1896). Best result = **124× above random**.
+
+State-of-the-art (I3D, VideoMAE) reaches ~60–65% using raw video on GPU.
