@@ -445,7 +445,7 @@ A few observations from this table:
 
 ![Per-Class Accuracy Distribution — 1,896 ASL Signs](figures/03_accuracy_distribution.png)
 
-For the best model (d=256, no augmentation):
+**Accuracy distribution across all 1,896 classes** (best model: d=256, no augmentation):
 
 | Accuracy range | Signs |
 |----------------|-------|
@@ -458,7 +458,7 @@ For the best model (d=256, no augmentation):
 
 Another ~700 classes sit above 60%. That's roughly 80% of the vocabulary performing well.
 
-The **125 zero-accuracy classes** are almost entirely a data problem. We examined them: nearly every zero-accuracy sign had fewer than 3 training examples. You can't learn a sign from 2 clips, regardless of how capable the model is. The ceiling isn't the architecture — it's the data. With more training examples for those rare signs, the number would drop significantly.
+The **125 zero-accuracy classes** are almost entirely a data problem. We examined them: nearly every zero-accuracy sign had fewer than 3 training examples. You can't learn a sign from 2 clips, regardless of how capable the model is. The ceiling isn't the architecture — it's the data.
 
 ### The vocabulary size effect
 
@@ -561,12 +561,50 @@ The hand detector — not the classifier — is the weakest link in the pipeline
 
 > **Watch below.** The overlay shows the hand skeleton in real time (navy = left hand, azure = right hand), a frame counter filling to 60, a hands-detected percentage, a confidence bar, and the predicted word centered on screen.
 
-**[▶ Watch the demo video](demo.mp4)**
-<!-- Upload to YouTube or Vimeo and replace this with an embed link -->
+**[▶ Watch the demo video](https://drive.google.com/file/d/1HVhxCz5sNoqvmhToBb7aJekgqqrpNhyh/view?usp=sharing)**
 
 **Model:** `transformer_d256_l3_v1896_noaug` | **Top-1:** 72.8% | **Latency:** 0.6ms | **Vocab:** 1,896 signs
 
 *Press Q to quit. Move your hand out of frame for ~1 second to reset between signs.*
+
+---
+
+## Our Biggest Pain Point: The Data Problem
+
+If there is one thing we want to be honest about in this writeup, it's this: **the data was harder than the model.**
+
+We spent more time fighting data problems — dead links, mismatched labels, inconsistent signers, disk space constraints, imbalanced class counts — than we spent on any model design decision. And in the end, the ceiling on our accuracy isn't set by the architecture. It's set by how much data we could collect.
+
+### The WLASL problem
+
+WLASL was supposed to be the foundation of our dataset. It's the most-cited academic ASL dataset — 21,083 video clips across 2,000 signs, published in 2020. When we tried to download it, **70% of the hosting links were dead.** YouTube videos removed. Vimeo accounts deleted. Six-year-old URLs pointing to nothing.
+
+We recovered 6,845 clips — 32% of what the paper describes. This is a reproducibility crisis that nobody in the community talks about loudly enough. Academic ASL datasets depend on external video hosting that has no commitment to permanence. Every year that passes, more links die.
+
+### 28 samples per class is not enough
+
+Even with three aggregated datasets and 52,998 training clips, we averaged **28 examples per class**. For comparison: ImageNet, the benchmark dataset for image classification, has ~1,300 examples per class. For speech recognition, datasets routinely have thousands of utterances per word.
+
+28 is the minimum we could work with — and only because of careful architectural choices (WeightedRandomSampler, MAE pre-training, label smoothing). Even then, 125 signs had so few examples that the model learned nothing about them at all.
+
+### The signer diversity gap
+
+Our dataset is not diverse. WLASL, ASL Citizen, and ASLense all draw from a limited pool of signers — mostly younger adults, relatively uniform lighting conditions, limited camera angles. Real ASL varies significantly across:
+
+- **Age** — children and elderly signers have very different signing styles
+- **Regional variation** — ASL has regional dialects; the same word can look quite different in different cities
+- **Handedness** — left-handed signers produce mirror images of the canonical training examples
+- **Signing speed** — fluent signers compress and co-articulate in ways isolated-sign datasets never capture
+
+Our model hasn't seen any of this variation. When it fails on a real user, it's often because that user doesn't sign the way the training data does.
+
+### Why this is hard to fix
+
+The obvious answer — collect more data — runs into a fundamental bootstrap problem. The communities that sign ASL fluently are the communities that would benefit most from ASL tools. But large-scale data collection requires coordination, compensation, annotation infrastructure, and institutional support that most academic projects don't have. 
+
+ASL Citizen (from Google) is a model for what this can look like at scale. More efforts like it are the path forward. But until the field treats ASL data collection with the same seriousness it treats model design, the ceiling will keep being set by data rather than architecture.
+
+> The model we built is as good as the data we had. With 10× more data and real signer diversity, 72.8% becomes a floor, not a ceiling.
 
 ---
 
