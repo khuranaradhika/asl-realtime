@@ -170,10 +170,9 @@ Self-attention allows the model to compare any frame to any other frame in paral
 
 The model discovers *which frames are discriminative* without hand-coded rules.
 
-<div class="grid grid-cols-2 gap-6 mt-4">
+<div class="grid grid-cols-2 gap-6 mt-2">
 <div>
-
-**Example 1: "FRIEND"**
+  Example 1: "FRIEND"
 
 | Frame Range | Activity | Attention |
 |---|---|---|
@@ -183,29 +182,12 @@ The model discovers *which frames are discriminative* without hand-coded rules.
 | 22–26 | **Interlocked fingers** | ▇ **Highest** |
 | 27–30 | Release motion | ▄ Medium |
 
-**Insight**: The handshape (frames 22–26) is the key sign feature.
-
 </div>
 <div>
 
-**Example 2: "AIRPLANE"**
-
-| Frame Range | Activity | Attention |
-|---|---|---|
-| 1–2 | Start position | ▁ Low |
-| 3–6 | Arm extends | ▃ Medium |
-| 7–9 | Arm moving | ▁ Low |
-| 10–18 | **Full extension** | ▇ **Highest** |
-| 19–23 | Hold position | ▁ Low |
-| 24–28 | Hand shape refine | ▄ High |
-
-**Insight**: Full arm extension (frames 10–18) is the defining moment.
+![Attention visualization for FRIEND and AIRPLANE signs](../images/friend-asl.png)
 
 </div>
-</div>
-
-<div class="quote mt-3">
-**No hand-coding required**: The model learns these temporal landmarks automatically through gradient descent. Each sign's attention profile is unique — frame 22 matters for "FRIEND", but not for "AIRPLANE".
 </div>
 
 
