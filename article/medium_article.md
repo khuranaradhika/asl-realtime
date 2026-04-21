@@ -569,5 +569,8 @@ This project was a team effort for the Applied Deep Learning course at Northeast
 **Gyula Planky** — ONNX export pipeline (`src/export.py`), CPU benchmarking and latency profiling, real-time demo application (buffer management, stability guards, hand overlay visualization), demo video
 
 ---
+---
 
-*Questions or collaboration: [khurana.rad@northeastern.edu](mailto:khurana.rad@northeastern.edu)*
+*Explore the full codebase on [GitHub](https://github.com/khuranaradhika/asl-realtime).*
+*Questions or collaboration: [mail.radhikakhurana@gmail.com](mailto:mail.radhikakhurana@gmail.com)*
+
