@@ -54,7 +54,7 @@ No single clean ASL dataset existed at the scale we needed. We aggregated three 
 
 ![Dataset Aggregation](figures/t01_dataset.png)
 
-**WLASL** was the most well-known academic ASL dataset — and effectively unusable at scale. The original paper linked to YouTube and Vimeo videos that have since been taken down. We recovered 6,845 of 21,083 videos — a 32% survival rate, four years after publication. This is a real reproducibility problem in this research area that nobody talks about enough.
+**WLASL** was the most well-known academic ASL dataset — and effectively unusable at scale. The original paper linked to YouTube and Vimeo videos that have since been taken down. We recovered 6,845 of 21,083 videos — a 32% survival rate, six years after publication. This is a real reproducibility problem in this research area that nobody talks about enough.
 
 **ASL Citizen** was the cleanest source: pre-extracted pose sequences from a Google-backed collection hosted on HuggingFace. No download issues.
 
@@ -133,7 +133,7 @@ Bidirectional pass
 Parameters: ~1.1M
 ```
 
-The BiLSTM scores better than the CNN at full vocabulary: around 31.5% with augmentation and ~67% without (again — more on why augmentation matters later). But it hits a fundamental bottleneck: **everything the model knows about a 60-frame sign has to fit into 256 numbers** before the classifier sees it. That's the hidden state. When you're distinguishing 1,896 signs, compressing all sign information into a 256-dimensional vector loses too much.
+With augmentation, the BiLSTM scores **31.5%** — actually worse than the CNN's 38.4%, despite having explicit temporal memory. Without augmentation it recovers to ~67–68%, edging out the CNN (~62%), because augmentation corrupts the precise geometry the LSTM depends on even more than it corrupts the CNN's local patterns. Either way, it hits a fundamental bottleneck: **everything the model knows about a 60-frame sign has to fit into 256 numbers** before the classifier sees it. That's the hidden state. When you're distinguishing 1,896 signs, compressing all sign information into a 256-dimensional vector loses too much.
 
 ### Architecture 3: Transformer — Full Context, No Bottleneck
 
@@ -361,7 +361,7 @@ We removed this from the final system. Not every technique that works in general
 
 ![Full Ablation: Every Model, Every Variable](figures/t10_ablation.png)
 
-The random baseline at 1,896 classes is 0.05% (1 in 1,896). Our best model is **1,456× above random** — on CPU, with keypoints only.
+The random baseline at 1,896 classes is 0.053% (1 in 1,896). Our best model is **~1,380× above random** — on CPU, with keypoints only.
 
 A few observations from this table:
 
