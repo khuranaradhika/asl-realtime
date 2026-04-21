@@ -3,6 +3,7 @@ theme: default
 title: Real-Time ASL Translation
 info: Applied Deep Learning
 highlighter: shiki
+colorSchema: 'light'
 drawings:
   persist: false
 transition: fade
@@ -28,19 +29,19 @@ css: unocss
 
   <div class="grid grid-cols-4 gap-4 mt-auto border-t border-slate-200 pt-6">
     <div>
-      <div class="mono-label">Data Pipeline</div>
+      <div class="mono-label">Model Architecture</div>
       <div class="text-sm font-semibold text-slate-800">Radhika Khurana</div>
     </div>
     <div>
-      <div class="mono-label">Keypoint Extraction</div>
+      <div class="mono-label">MediaPipe & Keypoints</div>
       <div class="text-sm font-semibold text-slate-800">Jian Gao</div>
     </div>
     <div>
-      <div class="mono-label">Architecture</div>
+      <div class="mono-label">Baselines</div>
       <div class="text-sm font-semibold text-slate-800">Hrishikesh Pradhan</div>
     </div>
     <div>
-      <div class="mono-label">Deployment</div>
+      <div class="mono-label">ONNX & Demo</div>
       <div class="text-sm font-semibold text-slate-800">Gyula Planky</div>
     </div>
   </div>
@@ -60,5 +61,5 @@ src: ./pages/03-radhika.md
 ---
 
 ---
-src: ./pages/04-gyula.md
+src: ./pages/05-gyula.md
 ---

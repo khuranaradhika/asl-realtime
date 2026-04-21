@@ -176,10 +176,10 @@ Linear classifier → C
 
 The model discovers *which frames are discriminative* without hand-coded rules.
 
-<div class="grid grid-cols-2 gap-6 mt-6">
+<div class="grid grid-cols-2 gap-6 mt-4">
 <div>
 
-## Example 1: "FRIEND"
+**Example 1: "FRIEND"**
 
 | Frame Range | Activity | Attention |
 |---|---|---|
@@ -194,7 +194,7 @@ The model discovers *which frames are discriminative* without hand-coded rules.
 </div>
 <div>
 
-## Example 2: "AIRPLANE"
+**Example 2: "AIRPLANE"**
 
 | Frame Range | Activity | Attention |
 |---|---|---|
@@ -210,8 +210,8 @@ The model discovers *which frames are discriminative* without hand-coded rules.
 </div>
 </div>
 
-<div class="quote mt-6">
-**No hand-coding required**: The model learns these temporal landmarks automatically through gradient descent. Each sign's attention profile is unique—frame 22 matters for "FRIEND", but not for "AIRPLANE".
+<div class="quote mt-3">
+**No hand-coding required**: The model learns these temporal landmarks automatically through gradient descent. Each sign's attention profile is unique — frame 22 matters for "FRIEND", but not for "AIRPLANE".
 </div>
 
 
