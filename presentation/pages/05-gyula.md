@@ -249,4 +249,9 @@ Real-time ASL recognition on CPU — no gloves, no GPU, no cloud.
 </div>
 </div>
 
+<div class="flex flex-col items-center mt-6">
+  <img src="/images/qrcode.png" alt="QR code" style="width:100px;height:100px;object-fit:contain;border-radius:6px;" />
+  <div class="mono-label !text-slate-400 mt-2">Read the full article on Medium</div>
+</div>
+
 </div>
