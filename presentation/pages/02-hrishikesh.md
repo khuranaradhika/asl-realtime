@@ -116,9 +116,8 @@ d_model=128, 3 layers
 
 </div>
 </div>
-
-<div class="quote mt-6">
-**Key insight**: Sign language needs *temporal reasoning across the full sequence*. CNN fails (no context). LSTM succeeds partially (weak long-range). Transformer excels (parallel, multi-headed attention).
+<div class="callout callout-blue mt-1">
+Key insight: Sign language needs temporal reasoning across the full sequence*. CNN fails (no context). LSTM succeeds partially (weak long-range). Transformer excels (parallel, multi-headed attention).
 </div>
 
 
@@ -126,9 +125,7 @@ d_model=128, 3 layers
 
 # Transformer: Multi-Head Attention
 
-Self-attention allows the model to compare *any* frame to *any other frame* in parallel — discovering which frames matter.
-
-<div class="grid grid-cols-2 gap-4 mt-2">
+<div class="grid grid-cols-2 gap-4 mt-1">
 <div>
 
 **Architecture**
@@ -147,7 +144,9 @@ Mean pooling
     ↓
 Linear classifier → C
 ```
-
+<div class="callout callout-blue mt-6">
+Self-attention allows the model to compare any frame to any other frame in parallel — discovering which frames matter.
+</div>
 </div>
 <div>
 
@@ -159,14 +158,9 @@ Linear classifier → C
   - Head 2: global arm trajectory
   - Head 3: finger motion onset
   - Head 4: release patterns
-- **Full context**: Every frame "sees" every other frame
 - **Learned importance**: Attention weights reveal which frames matter *per sign*
 
 </div>
-</div>
-
-<div class="quote mt-6">
-**Key difference**: LSTM's hidden state is a bottleneck (256 dims). Transformer's attention spreads reasoning across all 128×4=512 attention dimensions, in 4 independent heads.
 </div>
 
 
