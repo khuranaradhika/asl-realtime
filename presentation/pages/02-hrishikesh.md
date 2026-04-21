@@ -128,7 +128,7 @@ d_model=128, 3 layers
 
 Self-attention allows the model to compare *any* frame to *any other frame* in parallel — discovering which frames matter.
 
-<div class="grid grid-cols-2 gap-6 mt-6">
+<div class="grid grid-cols-2 gap-4 mt-2">
 <div>
 
 **Architecture**
