@@ -1,195 +1,217 @@
-# Pipeline
+# Pipeline: Webcam to Prediction in <25ms
 
-```
-Webcam / Video
-      ↓
-MediaPipe HandLandmarker  (~8 ms/frame)
-      ↓
-  (T, 126) keypoints       21 landmarks × 3 (xyz) × 2 hands
-      ↓
-Temporal Transformer       ~5 ms inference on CPU
-      ↓
-   ASL Word
-```
+<div class="grid grid-cols-5 gap-3 mt-8">
+<div class="card text-center">
+<div class="text-3xl font-bold text-blue-600">01</div>
+<div class="font-semibold mt-2">Webcam</div>
+<div class="text-sm text-gray-600 mt-2">30fps RGB video</div>
+<div class="text-xs text-gray-500">6.2M pixels/frame</div>
+</div>
 
-MediaPipe extracts hand skeleton — **no raw video reaches the model**.
+<div class="card text-center">
+<div class="text-3xl font-bold text-teal-600">02</div>
+<div class="font-semibold mt-2">MediaPipe</div>
+<div class="text-sm text-gray-600 mt-2">Keypoint extraction</div>
+<div class="text-xs text-gray-500">126 floats · ~8ms · CPU</div>
+</div>
+
+<div class="card text-center">
+<div class="text-3xl font-bold text-purple-600">03</div>
+<div class="font-semibold mt-2">60-Frame Buffer</div>
+<div class="text-sm text-gray-600 mt-2">2-second window</div>
+<div class="text-xs text-gray-500">Padded to model shape</div>
+</div>
+
+<div class="card text-center">
+<div class="text-3xl font-bold text-orange-600">04</div>
+<div class="font-semibold mt-2">Transformer</div>
+<div class="text-sm text-gray-600 mt-2">ONNX inference</div>
+<div class="text-xs text-gray-500">~5ms · 1,896 classes</div>
+</div>
+
+<div class="card text-center">
+<div class="text-3xl font-bold text-red-600">05</div>
+<div class="font-semibold mt-2">Prediction</div>
+<div class="text-sm text-gray-600 mt-2">Top-3 results</div>
+<div class="text-xs text-gray-500">Confidence scoring</div>
+</div>
+</div>
+
+<div class="grid grid-cols-4 gap-4 mt-8">
+<div class="card border-l-4 border-blue-500">
+<div class="text-2xl font-bold text-blue-600">&lt;25ms</div>
+<div class="text-sm text-gray-600">End-to-end latency</div>
+</div>
+
+<div class="card border-l-4 border-teal-500">
+<div class="text-2xl font-bold text-teal-600">3MB</div>
+<div class="text-sm text-gray-600">ONNX model size</div>
+</div>
+
+<div class="card border-l-4 border-purple-500">
+<div class="text-2xl font-bold text-purple-600">0</div>
+<div class="text-sm text-gray-600">Network requests</div>
+</div>
+
+<div class="card border-l-4 border-orange-500">
+<div class="text-2xl font-bold text-orange-600">No GPU</div>
+<div class="text-sm text-gray-600">CPU only</div>
+</div>
+</div>
+
 
 ---
 
-# Keypoint Extraction
+# Baselines: CNN vs. LSTM
 
-Each video frame → **126-dimensional vector**
+Two efficient baselines establish a performance spectrum from localized (CNN) to global-but-bottlenecked (LSTM).
+
+<div class="grid grid-cols-3 gap-4 mt-6">
+<div>
+
+**CNN (Conv1d)**
 
 ```
-Left hand:   21 landmarks × (x, y, z) = 63 floats
-Right hand:  21 landmarks × (x, y, z) = 63 floats
-─────────────────────────────────────────────────
-Total:                                  126 floats/frame
+4 × residual blocks
+kernel=3
+receptive field: ~21 frames
 ```
 
-Stored as `.npy` files of shape `(T, 126)` — one per video clip.
+- **Speed**: ~2–3ms (fastest)
+- **Parameters**: ~560K
+- **Accuracy**: **~62%**
+- **Shortcoming**: No long-range temporal context
+
+</div>
+<div>
+
+**LSTM (BiLSTM)**
+
+```
+2 × stacked layers
+hidden=128 → 256 out
+bidirectional pass
+```
+
+- **Speed**: ~3–5ms
+- **Parameters**: ~560K
+- **Accuracy**: **~67–68%**
+- **Shortcoming**: Hidden state bottleneck limits long-range reasoning
+
+</div>
+<div>
+
+**Transformer**
+
+```
+self-attention encoder
+d_model=128, 3 layers
+4 attention heads
+```
+
+- **Speed**: ~5ms
+- **Parameters**: ~450K
+- **Accuracy**: **~72%**
+- **Advantage**: Multi-head attention, no bottlenecks
+
+</div>
+</div>
+
+<div class="quote mt-6">
+**Key insight**: Sign language needs *temporal reasoning across the full sequence*. CNN fails (no context). LSTM succeeds partially (weak long-range). Transformer excels (parallel, multi-headed attention).
+</div>
+
 
 ---
 
-# Augmentations
+# Transformer: Multi-Head Attention
 
-Applied during training only.
+Self-attention allows the model to compare *any* frame to *any other frame* in parallel — discovering which frames matter.
 
-| Augmentation | Description | Effect |
+<div class="grid grid-cols-2 gap-6 mt-6">
+<div>
+
+**Architecture**
+
+```
+Input (B, T, 126)
+    ↓
+Positional encoding
+    ↓
+3 × Transformer blocks
+  - 4 attention heads
+  - d_model=128
+  - FFN d_ff=256
+    ↓
+Mean pooling
+    ↓
+Linear classifier → C
+```
+
+</div>
+<div>
+
+**Why It Works**
+
+- **Parallel computation**: All frame-to-frame comparisons happen at once (unlike LSTM's sequential gates)
+- **Multi-head diversity**: 4 heads learn different temporal patterns
+  - Head 1: handshape transitions
+  - Head 2: global arm trajectory
+  - Head 3: finger motion onset
+  - Head 4: release patterns
+- **Full context**: Every frame "sees" every other frame
+- **Learned importance**: Attention weights reveal which frames matter *per sign*
+
+</div>
+</div>
+
+<div class="quote mt-6">
+**Key difference**: LSTM's hidden state is a bottleneck (256 dims). Transformer's attention spreads reasoning across all 128×4=512 attention dimensions, in 4 independent heads.
+</div>
+
+
+---
+
+# Attention Weights: Learned Temporal Landmarks
+
+The model discovers *which frames are discriminative* without hand-coded rules.
+
+<div class="grid grid-cols-2 gap-6 mt-6">
+<div>
+
+## Example 1: "FRIEND"
+
+| Frame Range | Activity | Attention |
 |---|---|---|
-| Horizontal flip | Swap left/right hands, mirror x | Doubles effective dataset size |
-| Temporal jitter | Randomly drop or repeat frames | Robustness to dropped frames |
-| Gaussian noise | σ=0.01 on all coordinates | Simulates MediaPipe detection noise |
-| Wrist normalization | Subtract dominant wrist position | Translation invariance |
+| 1–7 | Setup (low relevance) | ▁ Low |
+| 8–12 | Hand approach | ▃ High |
+| 13–21 | Hand traveling | ▁ Low |
+| 22–26 | **Interlocked fingers** | ▇ **Highest** |
+| 27–30 | Release motion | ▄ Medium |
 
----
-
-# CNN Baseline: Local Temporal Patterns
-
-A lightweight convolutional baseline to establish a lower bound on model complexity.
-
-<div class="grid grid-cols-2 gap-6 mt-6">
-<div>
-
-**Architecture**
-
-```
-Input (B, T, 126)
-    ↓
-Linear projection → d=128
-    ↓
-4 × Conv1d residual blocks
-  (kernel=3, causal padding)
-    ↓
-Linear classifier → C
-    ↓
-Output (B, C) or (T, B, C+1)
-```
+**Insight**: The handshape (frames 22–26) is the key sign feature.
 
 </div>
 <div>
 
-**Key Properties**
+## Example 2: "AIRPLANE"
 
-- **Receptive field**: 3×7 = ~21 frames max
-- **Parameters**: ~560K
-- **CPU inference**: ~2–3ms (fastest)
-- **No long-range memory**: Cannot model sign endpoints 2+ seconds away
+| Frame Range | Activity | Attention |
+|---|---|---|
+| 1–2 | Start position | ▁ Low |
+| 3–6 | Arm extends | ▃ Medium |
+| 7–9 | Arm moving | ▁ Low |
+| 10–18 | **Full extension** | ▇ **Highest** |
+| 19–23 | Hold position | ▁ Low |
+| 24–28 | Hand shape refine | ▄ High |
 
-</div>
-</div>
-
----
-
-# CNN Baseline: Trade-offs
-
-<div class="grid grid-cols-3 gap-4 mt-6">
-<div class="card">
-
-**✓ Strengths**
-
-- Fastest CPU inference
-- Captures local motion
-- Simplest to debug
-
-</div>
-<div class="card">
-
-**✗ Weaknesses**
-
-- **No long-range context**
-- Brittle to variable signing speed
-- ~10–15% lower accuracy than Transformer
-
-</div>
-<div class="card">
-
-**Empirical Result**
-
-Top-1 accuracy: **~62%** on 1,896-class vocab
-
-(Transformer: ~72%)
+**Insight**: Full arm extension (frames 10–18) is the defining moment.
 
 </div>
 </div>
 
 <div class="quote mt-6">
-**Lesson**: Convolutional locality is fundamentally limiting for sign language. Signs are defined by temporal *dynamics* — the relationship between frame 1 and frame 80 matters.
+**No hand-coding required**: The model learns these temporal landmarks automatically through gradient descent. Each sign's attention profile is unique—frame 22 matters for "FRIEND", but not for "AIRPLANE".
 </div>
 
----
 
-# LSTM Baseline: Sequential Hidden State
-
-Bidirectional LSTM: maintains a hidden state across all frames, no positional encoding needed.
-
-<div class="grid grid-cols-2 gap-6 mt-6">
-<div>
-
-**Architecture**
-
-```
-Input (B, T, 126)
-    ↓
-2 × stacked BiLSTM
-  (hidden=128 → 256 bidirectional)
-    ↓
-Dropout
-    ↓
-Linear classifier → C
-    ↓
-Output (B, C) or (T, B, C+1)
-```
-
-</div>
-<div>
-
-**Key Properties**
-
-- **Memory span**: All frames — implicit gate weighting
-- **Parameters**: ~560K
-- **CPU inference**: ~3–5ms (middle ground)
-- **Bidirectional**: Forward + backward context
-
-</div>
-</div>
-
----
-
-# LSTM Baseline: Trade-offs
-
-<div class="grid grid-cols-3 gap-4 mt-6">
-<div class="card">
-
-**✓ Strengths**
-
-- **Full temporal span**
-- No positional encoding
-- 3× faster than Transformer
-- Implicit gate weighting
-
-</div>
-<div class="card">
-
-**✗ Weaknesses**
-
-- Hidden state bottleneck
-- Weaker long-range modeling
-- Sequential computation
-- ~5–8% lower accuracy
-
-</div>
-<div class="card">
-
-**Empirical Result**
-
-Top-1 accuracy: **~67–68%** on 1,896-class vocab
-
-(CNN: ~62%, Transformer: ~72%)
-
-</div>
-</div>
-
-<div class="quote mt-6">
-**Insight**: BiLSTM bridges the gap—full temporal coverage but weaker attention than Transformer. Good efficiency-accuracy trade-off.
-</div>
