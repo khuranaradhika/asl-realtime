@@ -1,88 +1,115 @@
-/* Clean & Classy PDF/Research Theme */
+/* Premium Light Theme (Stripe / Apple Inspired) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 :root {
-  --slidev-theme-primary: #0f766e; /* Teal 700 */
-  --slidev-theme-background: #ffffff;
+  --bg-light: #FAFAFA;
+  --bg-card: #FFFFFF;
+  --border-subtle: #E2E8F0; /* Slate 200 */
+  --text-primary: #0F172A; /* Slate 900 */
+  --text-secondary: #64748B; /* Slate 500 */
+  --accent-teal: #0D9488; /* Teal 600 */
+  --accent-blue: #2563EB; /* Blue 600 */
 }
 
 .slidev-layout {
-  background-color: #ffffff;
-  color: #1e293b; /* Slate 800 */
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-light);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Very soft, elegant background mesh gradient */
+  background-image: 
+    radial-gradient(circle at 10% 10%, rgba(20, 184, 166, 0.05), transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(59, 130, 246, 0.05), transparent 40%);
 }
 
 /* Typography */
 h1 {
   font-weight: 700 !important;
-  letter-spacing: -0.02em;
-  color: #0f172a; /* Slate 900 */
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
 }
 
 .subtext {
-  color: #64748b; /* Slate 500 */
+  color: var(--text-secondary);
   font-weight: 400;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
+  font-size: 0.95rem;
 }
 
-/* Research Paper Cards */
-.paper-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0; /* Slate 200 */
-  border-radius: 8px;
+/* Bright Bento UI Cards */
+.bento-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px; /* Slightly rounder and friendlier for light mode */
   padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.paper-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+.bento-card:hover {
+  border-color: #CBD5E1;
+  transform: translateY(-2px);
+  /* The "Apple" diffuse shadow hover effect */
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.08), 0 10px 15px -3px rgba(15, 23, 42, 0.03);
 }
 
-/* KPI Metrics */
-.kpi-box {
-  border-left: 3px solid var(--slidev-theme-primary);
-  background: #f8fafc; /* Slate 50 */
-  padding: 1rem 1.25rem;
-  border-radius: 0 6px 6px 0;
+/* Micro-Components */
+.mono-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94A3B8; /* Slate 400 */
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
 }
 
-.kpi-value {
-  font-size: 2rem;
+.gradient-text {
+  background: linear-gradient(135deg, #0F172A 0%, #334155 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Stat Blocks */
+.stat-hero {
+  font-size: 2.5rem;
   font-weight: 700;
-  color: #0f172a;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: var(--text-primary);
 }
 
-.kpi-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #64748b;
-  margin-top: 0.25rem;
-  font-weight: 600;
-}
-
-/* Elegant Quotes/Callouts */
-.research-quote {
-  border-left: 2px solid #cbd5e1;
-  padding-left: 1.25rem;
-  margin-top: 1.5rem;
-  color: #475569;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  background: linear-gradient(to right, #f8fafc, transparent);
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-/* Badges */
-.status-badge {
-  display: inline-block;
+.tag {
+  display: inline-flex;
+  align-items: center;
   padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
+  border-radius: 9999px;
+  font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.tag.teal { background: #F0FDFA; border: 1px solid #CCFBF1; color: var(--accent-teal); }
+.tag.blue { background: #EFF6FF; border: 1px solid #DBEAFE; color: var(--accent-blue); }
+.tag.slate { background: #F8FAFC; border: 1px solid #E2E8F0; color: #475569; }
+
+/* Progress/Attention Bars for Light Mode */
+.attention-track {
+  width: 100%;
+  height: 6px;
+  background: #F1F5F9; /* Slate 100 */
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.attention-fill {
+  height: 100%;
+  position: absolute;
+  border-radius: 999px;
+  transition: width 0.5s ease;
 }
