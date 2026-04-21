@@ -79,7 +79,7 @@ receptive field: ~21 frames
 
 - **Speed**: ~2–3ms (fastest)
 - **Parameters**: ~560K
-- **Accuracy**: **~62%**
+- **Accuracy**: **~31%**
 - **Shortcoming**: No long-range temporal context
 
 </div>
@@ -95,7 +95,7 @@ bidirectional pass
 
 - **Speed**: ~3–5ms
 - **Parameters**: ~560K
-- **Accuracy**: **~67–68%**
+- **Accuracy**: **~38%**
 - **Shortcoming**: Hidden state bottleneck limits long-range reasoning
 
 </div>
