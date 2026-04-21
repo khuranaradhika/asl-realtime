@@ -52,12 +52,7 @@ MediaPipe runs at roughly 8ms per frame on a CPU. That means hand detection take
 
 No single clean ASL dataset existed at the scale we needed. We aggregated three sources, each with very different characteristics.
 
-| Dataset | Source | Videos/Clips | Classes | Challenge |
-|---------|--------|-------------|---------|-----------|
-| WLASL | Academic (2020) | 6,845 recovered of 21,083 | 2,000 | 70% of hosting links dead |
-| ASL Citizen | Google / HuggingFace | 1,542 pre-extracted | ~300 | None — clean |
-| ASLense | Custom collection | 48,797 clips | 2,208 | 108k videos, 2GB disk budget |
-| **Combined** | | **52,998 train** | **1,896** | Stratified split |
+![Dataset Aggregation](figures/t01_dataset.png)
 
 **WLASL** was the most well-known academic ASL dataset — and effectively unusable at scale. The original paper linked to YouTube and Vimeo videos that have since been taken down. We recovered 6,845 of 21,083 videos — a 32% survival rate, four years after publication. This is a real reproducibility problem in this research area that nobody talks about enough.
 
@@ -69,12 +64,7 @@ No single clean ASL dataset existed at the scale we needed. We aggregated three 
 
 Vocabulary size is a fundamental tradeoff. More signs means better coverage but fewer training examples per sign, which makes learning harder.
 
-| Vocab | Avg Samples/Class | Learnable? | Coverage |
-|-------|------------------|------------|----------|
-| 300 | 9.6 | Barely | Limited |
-| **1,896** | **28.0** | **Yes** | **Good** |
-| 2,591 | 20.7 | Marginal | Better |
-| Full WLASL | 3.4 | No | — |
+![Vocabulary Size vs. Learnability](figures/t02_vocab_tradeoff.png)
 
 We tested several cutoffs. At 2,591 classes, accuracy dropped ~4 points in early training epochs because average samples per class fell below the threshold where the model could generalize. At 1,896 classes, we hit 28 samples per class on average — the minimum viable density. 96% of classes have at least 10 examples, and 449 classes have 30 or more.
 
@@ -174,26 +164,13 @@ We can directly inspect what the Transformer learned to pay attention to by look
 
 ### FRIEND
 
-| Frame Range | What's Happening | Attention Level |
-|------------|-----------------|-----------------|
-| 1–7 | Setup (hands approach) | Low |
-| 8–12 | Hand approach | High |
-| 13–21 | Hands traveling toward each other | Low |
-| 22–26 | **Fingers interlock** | **Highest** |
-| 27–30 | Release motion | Medium |
+![Attention Weights: FRIEND](figures/t03_attention_friend.png)
 
 The model has learned that the interlocking of fingers at frames 22–26 is the defining moment of FRIEND. The approach and release are context — the interlock is the sign.
 
 ### AIRPLANE
 
-| Frame Range | What's Happening | Attention Level |
-|------------|-----------------|-----------------|
-| 1–2 | Start position | Low |
-| 3–6 | Arm begins extending | Medium |
-| 7–9 | Arm moving outward | Low |
-| 10–18 | **Full arm extension with spread hand** | **Highest** |
-| 19–23 | Hold at extension | Low |
-| 24–28 | Hand shape refinement | High |
+![Attention Weights: AIRPLANE](figures/t04_attention_airplane.png)
 
 For AIRPLANE, full arm extension (frames 10–18) is the discriminative moment. The approach doesn't matter. The hold after extension doesn't matter. The specific instant of full extension with the spread hand is the sign.
 
@@ -207,14 +184,7 @@ This analysis was conducted by **Hrishikesh Pradhan**.
 
 Here's the full architecture of our best model:
 
-| Step | What it does |
-|------|-------------|
-| Input | `(B, T, 126)` — batch × 150 frames × 126 keypoints per frame |
-| Linear projection | 126 → d_model; lifts raw coordinates into feature space |
-| Positional encoding | Sinusoidal; injects frame order into the model |
-| Transformer × 3 | 4 attention heads · FFN 2×d_model · pre-norm |
-| Masked mean pool | Averages only non-padded frames |
-| Classifier | d_model → 1,896 class logits |
+![Model Architecture Steps](figures/t05_architecture.png)
 
 ### Why sinusoidal positional encoding?
 
@@ -240,14 +210,7 @@ But signs don't end at a consistent frame — shorter clips are zero-padded to 1
 
 We didn't start with the right setup. Here's the full experimental progression:
 
-| Experiment | What Changed | Top-1 | Lesson |
-|------------|-------------|-------|--------|
-| EXP-003 | CTC loss | **6.7%** | Wrong loss function for single-label classification |
-| EXP-003CE | Cross-entropy loss | **40.8%** | Correct loss is foundational — nothing else matters without it |
-| EXP-004 | d=256 + augmentation | **44.0%** | Scale helps marginally; augmentation is the bottleneck |
-| EXP-004B | Knowledge distillation | **49.5%** | Teacher soft labels improve calibration but don't close the gap |
-| EXP-005 | MAE pre-training + no aug | **71.5%** | Self-supervised pre-training + clean geometry: +27pt jump |
-| EXP-006 | d=256, no augmentation | **72.8%** | Best: increased capacity + no geometry corruption |
+![Five Models, Five Lessons](figures/t06_experiments.png)
 
 The biggest single lesson is buried in the jump from EXP-004 (44.0%) to EXP-005 (71.5%): **removing augmentation contributed +27 percentage points**. That single training decision — stopping something we were doing — was responsible for most of the model's final performance. The augmentation section below explains exactly why.
 
@@ -255,15 +218,7 @@ The biggest single lesson is buried in the jump from EXP-004 (44.0%) to EXP-005 
 
 ## Training Setup: Every Hyperparameter and Why
 
-| Setting | Value | Why |
-|---------|-------|-----|
-| Optimizer | AdamW | Decoupled weight decay; better on sparse class gradients than Adam |
-| Learning rate | 3×10⁻⁴ | Standard transformer LR; cosine schedule decays it smoothly |
-| Schedule | Cosine annealing | Avoids late-stage loss plateaus; smooth LR decay to zero |
-| Gradient clip | 1.0 | Prevents attention layer gradient explosions during early training |
-| Label smoothing | 0.1 | Prevents overconfidence on ambiguous signs at 1,896 classes |
-| Sequence length | T = 150 | Covers the longest sign; padding mask excludes empty frames |
-| Sampler | 1/class_count | Every sign gets equal batch exposure regardless of clip count |
+![Training Hyperparameters](figures/t07_training_setup.png)
 
 ### What is cross-entropy loss?
 
@@ -309,12 +264,7 @@ The results:
 
 ![Augmentation vs. No Augmentation (d=256 Transformer)](figures/02_augmentation.png)
 
-| | With Augmentation | No Augmentation |
-|---|---|---|
-| Top-1 Accuracy (d=256) | 44.0% | **72.8%** |
-| Top-5 Accuracy | 60.2% | **90.0%** |
-| Classes at 100% | 266 | **844** |
-| Classes at 0% | 465 | **125** |
+![Augmentation vs. No Augmentation](figures/t08_augmentation.png)
 
 A **28.8 percentage point** difference from a single training decision.
 
@@ -360,13 +310,7 @@ We then **throw away the reconstruction head** and transfer only the encoder wei
 
 The headline comparison:
 
-| | d=128 + MAE, no aug | d=256, no aug |
-|---|---|---|
-| Top-1 Accuracy | 71.5% | **72.8%** |
-| Top-5 Accuracy | 89.5% | **90.0%** |
-| Zero-accuracy classes | **113** | 125 |
-| Classes recovered vs. baseline | **+23** | — |
-| Recovered class avg accuracy | ~10–15% | 0% |
+![MAE Pre-Training vs. Best Model](figures/t09_mae.png)
 
 The d=256 model wins on overall accuracy — it has 4× more parameters and that capacity advantage dominates on well-represented signs.
 
@@ -415,15 +359,7 @@ We removed this from the final system. Not every technique that works in general
 
 ![Ablation: All Models on 1,896-Class ASL](figures/01_ablation.png)
 
-| Model | Top-1 | Top-5 | Params | Zero-Acc Classes |
-|-------|-------|-------|--------|-----------------|
-| BiLSTM | 31.5% | 53.1% | 1.1M | 749 |
-| 1D CNN | 38.4% | 61.1% | 656K | 612 |
-| Transformer d=128 + aug | 40.1% | 58.9% | 658K | ~500 |
-| Transformer d=256 + aug | 44.0% | 60.2% | 2.6M | 465 |
-| Distilled (d=128) | 49.5% | 71.3% | 658K | 374 |
-| **Transformer d=128 + MAE, no aug** | **71.5%** | **89.5%** | **658K** | **113** |
-| **Transformer d=256, no aug** | **72.8%** | **90.0%** | **2.6M** | **125** |
+![Full Ablation: Every Model, Every Variable](figures/t10_ablation.png)
 
 The random baseline at 1,896 classes is 0.05% (1 in 1,896). Our best model is **1,456× above random** — on CPU, with keypoints only.
 
@@ -447,12 +383,7 @@ A few observations from this table:
 
 **Accuracy distribution across all 1,896 classes** (best model: d=256, no augmentation):
 
-| Accuracy range | Signs |
-|----------------|-------|
-| 100% | **844** |
-| 60–99% | ~700 |
-| 20–59% | ~227 |
-| 0% | **125** |
+![Per-Class Accuracy Distribution](figures/t11_accuracy_dist.png)
 
 **844 classes — 44% of the vocabulary — score 100%**. The model has fully learned those signs and will recognize them correctly every time given clean input.
 
@@ -480,13 +411,7 @@ The model has mastered everyday conversational ASL. The accuracy drops off as yo
 
 ![SOTA Comparison on ASL Word Recognition](figures/04_sota_comparison.png)
 
-| Model | Top-1 | Hardware | Input |
-|-------|-------|----------|-------|
-| I3D | ~60% | GPU | Raw video |
-| VideoMAE | ~65% | GPU | Raw video |
-| SPOTER | ~60% | GPU | Keypoints |
-| **Ours (d=128 + MAE, no aug)** | **71.5%** | **CPU** | **Keypoints** |
-| **Ours (d=256, no aug)** | **72.8%** | **CPU** | **Keypoints** |
+![State-of-the-Art Comparison](figures/t12_sota.png)
 
 Every competitive model in this accuracy range requires a GPU and processes raw video. Ours is the only model that:
 
@@ -535,12 +460,7 @@ The model is fast enough that the hand detector (8ms) is 13× slower than the cl
 
 ### Systematic sign confusions
 
-| Confused pair | Why |
-|--------------|-----|
-| MOTHER / FATHER | Same handshape, different face position (chin vs. forehead) |
-| WEEK / NEXT-WEEK | Same motion pattern, one temporally shifted |
-| HELP / ASSIST | Near-identical hand configuration |
-| APPLE / ONION | Both involve a twist at the cheek |
+![Systematic Sign Confusions](figures/t13_failures.png)
 
 These aren't purely model failures — they're inherent ambiguities in the signs themselves. Some of these pairs confuse human viewers too. What they reveal is that the model has learned the correct discriminative features (handshape, position, motion) but sometimes can't resolve the final ambiguity.
 
