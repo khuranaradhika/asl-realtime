@@ -20,7 +20,15 @@ def get_hand_detector():
         url = ("https://storage.googleapis.com/mediapipe-models/"
                "hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task")
         print("Downloading MediaPipe hand model...")
-        urllib.request.urlretrieve(url, str(model_path))
+        import ssl
+        try:
+            import certifi
+            ssl_ctx = ssl.create_default_context(cafile=certifi.where())
+        except ImportError:
+            ssl_ctx = ssl._create_unverified_context()
+        with urllib.request.urlopen(url, context=ssl_ctx) as r, \
+             open(str(model_path), "wb") as f:
+            f.write(r.read())
         print("Done.")
 
     BaseOptions           = mp.tasks.BaseOptions
@@ -69,3 +77,63 @@ def extract_keypoints_from_frame(rgb: np.ndarray, detector) -> tuple[np.ndarray,
             rh = coords
 
     return np.concatenate([lh, rh]), result
+
+
+# ── Holistic (hands + full body pose) ─────────────────────────────────────────
+
+def get_holistic_detector():
+    """
+    Create a MediaPipe Holistic detector.
+    Returns pose + hand landmarks in a single call — used for holistic preprocessing.
+    Requires mediapipe >= 0.10.0 (legacy solutions API, still supported).
+    """
+    import mediapipe as mp
+    return mp.solutions.holistic.Holistic(
+        static_image_mode=False,
+        model_complexity=1,
+        smooth_landmarks=True,
+        enable_segmentation=False,
+        refine_face_landmarks=False,
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5,
+    )
+
+
+def extract_holistic_from_frame(rgb: np.ndarray, detector) -> np.ndarray:
+    """
+    Extract 225-dim holistic keypoint vector from a single RGB frame.
+
+    Layout: [left_hand(63), right_hand(63), pose(99)]
+      - Hands: 21 landmarks × 3 (x, y, z), zeros if not detected
+      - Pose:  33 landmarks × 3 (x, y, z), zeros if not detected
+
+    Args:
+        rgb:      (H, W, 3) uint8 RGB array
+        detector: MediaPipe Holistic instance (from get_holistic_detector())
+
+    Returns:
+        kpts: (225,) float32 array
+    """
+    from src.config import HOLISTIC_DIM
+    result = detector.process(rgb)
+
+    lh   = np.zeros(63,  dtype=np.float32)
+    rh   = np.zeros(63,  dtype=np.float32)
+    pose = np.zeros(99,  dtype=np.float32)
+
+    if result.left_hand_landmarks:
+        lh = np.array([[lm.x, lm.y, lm.z]
+                        for lm in result.left_hand_landmarks.landmark],
+                       dtype=np.float32).flatten()
+
+    if result.right_hand_landmarks:
+        rh = np.array([[lm.x, lm.y, lm.z]
+                        for lm in result.right_hand_landmarks.landmark],
+                       dtype=np.float32).flatten()
+
+    if result.pose_landmarks:
+        pose = np.array([[lm.x, lm.y, lm.z]
+                          for lm in result.pose_landmarks.landmark],
+                         dtype=np.float32).flatten()
+
+    return np.concatenate([lh, rh, pose])
